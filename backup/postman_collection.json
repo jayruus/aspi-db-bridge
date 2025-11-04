@@ -1,0 +1,330 @@
+{
+  "info": {
+    "name": "DbBridge API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:5001"
+    },
+    {
+      "key": "bridgeSecret",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["health"]
+        }
+      }
+    },
+    {
+      "name": "User_GetByUsername",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-Bridge-Secret",
+            "value": "{{bridgeSecret}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"queryKey\": \"User_GetByUsername_8f4a2c\",\n  \"params\": {\n    \"username\": \"testuser\"\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/db/exec",
+          "host": ["{{baseUrl}}"],
+          "path": ["db", "exec"]
+        }
+      }
+    },
+    {
+      "name": "User_GetById",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-Bridge-Secret",
+            "value": "{{bridgeSecret}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"queryKey\": \"User_GetById_4b2d1e\",\n  \"params\": {\n    \"id\": 1\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/db/exec",
+          "host": ["{{baseUrl}}"],
+          "path": ["db", "exec"]
+        }
+      }
+    },
+    {
+      "name": "Evento_GetAssegnati",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-Bridge-Secret",
+            "value": "{{bridgeSecret}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"queryKey\": \"Evento_GetAssegnati_9e7f3a\",\n  \"params\": {\n    \"tecnicoId\": \"TEC001\",\n    \"offset\": 0,\n    \"size\": 10\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/db/exec",
+          "host": ["{{baseUrl}}"],
+          "path": ["db", "exec"]
+        }
+      }
+    },
+    {
+      "name": "Evento_GetPianificati",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-Bridge-Secret",
+            "value": "{{bridgeSecret}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"queryKey\": \"Evento_GetPianificati_5c8b2f\",\n  \"params\": {\n    \"tecnicoId\": \"TEC001\",\n    \"offset\": 0,\n    \"size\": 10\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/db/exec",
+          "host": ["{{baseUrl}}"],
+          "path": ["db", "exec"]
+        }
+      }
+    },
+    {
+      "name": "Evento_GetById",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-Bridge-Secret",
+            "value": "{{bridgeSecret}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"queryKey\": \"Evento_GetById_1a4f7b\",\n  \"params\": {\n    \"id\": 123\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/db/exec",
+          "host": ["{{baseUrl}}"],
+          "path": ["db", "exec"]
+        }
+      }
+    },
+    {
+      "name": "Evento_Update",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-Bridge-Secret",
+            "value": "{{bridgeSecret}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"queryKey\": \"Evento_Update_3d9e5c\",\n  \"params\": {\n    \"note_evento\": \"Updated note\",\n    \"priorita\": \"HIGH\",\n    \"stato\": \"A\",\n    \"data_pianifica\": \"2025-10-30\",\n    \"id\": 123\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/db/exec",
+          "host": ["{{baseUrl}}"],
+          "path": ["db", "exec"]
+        }
+      }
+    },
+    {
+      "name": "Evento_GetInterventiByEventoId",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-Bridge-Secret",
+            "value": "{{bridgeSecret}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"queryKey\": \"Evento_GetInterventiByEventoId_7f2a8b\",\n  \"params\": {\n    \"eventoId\": 123,\n    \"workorder\": \"WO001\",\n    \"offset\": 0,\n    \"size\": 10\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/db/exec",
+          "host": ["{{baseUrl}}"],
+          "path": ["db", "exec"]
+        }
+      }
+    },
+    {
+      "name": "Evento_GetEventiByTecnico",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-Bridge-Secret",
+            "value": "{{bridgeSecret}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"queryKey\": \"Evento_GetEventiByTecnico_6e1f9d\",\n  \"params\": {\n    \"tecnicoId\": \"TEC001\",\n    \"offset\": 0,\n    \"size\": 10\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/db/exec",
+          "host": ["{{baseUrl}}"],
+          "path": ["db", "exec"]
+        }
+      }
+    },
+    {
+      "name": "Evento_CreateIntervento",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-Bridge-Secret",
+            "value": "{{bridgeSecret}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"queryKey\": \"Evento_CreateIntervento_2b5g8h\",\n  \"params\": {\n    \"evento_id\": 123,\n    \"tecnico_id\": \"TEC001\",\n    \"nome_tecnico\": \"Mario Rossi\",\n    \"cod_tipo_evento\": \"INT\",\n    \"des_tipo_evento\": \"Intervento\",\n    \"descrizione_evento\": \"Riparazione\",\n    \"stato\": \"A\",\n    \"des_stato\": \"Aperto\"\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/db/exec",
+          "host": ["{{baseUrl}}"],
+          "path": ["db", "exec"]
+        }
+      }
+    },
+    {
+      "name": "Evento_GetTipiIntervento",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-Bridge-Secret",
+            "value": "{{bridgeSecret}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"queryKey\": \"Evento_GetTipiIntervento_4c7i2j\",\n  \"params\": {}\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/db/exec",
+          "host": ["{{baseUrl}}"],
+          "path": ["db", "exec"]
+        }
+      }
+    },
+    {
+      "name": "Evento_GetStatiIntervento",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-Bridge-Secret",
+            "value": "{{bridgeSecret}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"queryKey\": \"Evento_GetStatiIntervento_9k3l5m\",\n  \"params\": {}\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/db/exec",
+          "host": ["{{baseUrl}}"],
+          "path": ["db", "exec"]
+        }
+      }
+    },
+    {
+      "name": "Batch Example",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-Bridge-Secret",
+            "value": "{{bridgeSecret}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"ops\": [\n    {\n      \"queryKey\": \"User_GetByUsername_8f4a2c\",\n      \"params\": {\n        \"username\": \"testuser\"\n      }\n    },\n    {\n      \"queryKey\": \"Evento_GetById_1a4f7b\",\n      \"params\": {\n        \"id\": 123\n      }\n    }\n  ]\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/db/execBatch",
+          "host": ["{{baseUrl}}"],
+          "path": ["db", "execBatch"]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  # ASP.NET Core DbBridge Service
+  dbbridge:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: aspi-dbbridge
+    ports:
+      - "5001:5001"
+    environment:
+      - SQL_CONN=Server=pilates.centrosportivolife.it,15432;Database=MSSql32801;User Id=sa;Password=AspiProdSecurePass2024!;TrustServerCertificate=True
+      - BRIDGE_SECRET=dev-bridge-secret-2025
+    restart: unless-stopped
+    networks:
+      - aspi-network
+
+networks:
+  aspi-network:
+    external: true

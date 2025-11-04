@@ -1,0 +1,1597 @@
+{
+    "success": true,
+    "data": [
+        {
+            "id": 115,
+            "username": "000092",
+            "password": "000092",
+            "ruolo": "user",
+            "nome": "AOU \"Policlinico - Vittorio Emanuele\"",
+            "email": "a@a.it",
+            "attivo": false,
+            "tecnico_id": null
+        },
+        {
+            "id": 121,
+            "username": "a.cristaldi",
+            "password": "dsdsijs6585",
+            "ruolo": "project",
+            "nome": "Andrea Cristaldi",
+            "email": "a@a.it",
+            "attivo": false,
+            "tecnico_id": null
+        },
+        {
+            "id": 148,
+            "username": "a.lopresti$",
+            "password": "L0prest12016",
+            "ruolo": "admin",
+            "nome": "",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 1,
+            "username": "Adm1n$",
+            "password": "Asp1@dm1n",
+            "ruolo": "admin",
+            "nome": "Amministratore",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 206,
+            "username": "AngeloL",
+            "password": "Yst6ua!",
+            "ruolo": "tecnico",
+            "nome": "Angelo Lanzetta",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": "138"
+        },
+        {
+            "id": 2,
+            "username": "antonino liotta",
+            "password": "inactive09",
+            "ruolo": "service",
+            "nome": "Palermo Antonino Liotta",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 111,
+            "username": "arzu",
+            "password": "!arz09$",
+            "ruolo": "tecnico",
+            "nome": "Andrea Arzu",
+            "email": "g@g.it",
+            "attivo": false,
+            "tecnico_id": "71"
+        },
+        {
+            "id": 172,
+            "username": "ASPI_2675",
+            "password": "20ergo_kX",
+            "ruolo": "user",
+            "nome": "Ergo Meccanica srl",
+            "email": "a.tuberosa@ergomeccanica.com",
+            "attivo": false,
+            "tecnico_id": null
+        },
+        {
+            "id": 5,
+            "username": "ASPI-000074",
+            "password": "ASPI-000074",
+            "ruolo": "user",
+            "nome": "COMUNE DI BAGHERIA",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 6,
+            "username": "ASPI-000075",
+            "password": "ASPI-000075",
+            "ruolo": "user",
+            "nome": "COMUNE DI CATANIA",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 7,
+            "username": "ASPI-000076",
+            "password": "ASPI-000076",
+            "ruolo": "user",
+            "nome": "TOSCANO S.P.A.",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 8,
+            "username": "ASPI-000077",
+            "password": "ASPI-000077",
+            "ruolo": "user",
+            "nome": "SOCIETA' EDITRICE SICILIANA S.",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 9,
+            "username": "ASPI-000092",
+            "password": "ASPI-000092",
+            "ruolo": "user",
+            "nome": "AZ. OSPEDALIERA UNIVERSITARIA ",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 10,
+            "username": "ASPI-000096",
+            "password": "ASPI-000096",
+            "ruolo": "user",
+            "nome": "LEMARFARMA S.P.A.",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 11,
+            "username": "ASPI-000098",
+            "password": "ASPI-000098",
+            "ruolo": "user",
+            "nome": "AZIENDA U.S.L. N. 6 PALERMO",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 12,
+            "username": "ASPI-000103",
+            "password": "ASPI-000103",
+            "ruolo": "user",
+            "nome": "000103-COMUNE DI MARSALA",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 13,
+            "username": "ASPI-000104",
+            "password": "ASPI-000104",
+            "ruolo": "user",
+            "nome": "COMUNE DI MILAZZO",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 14,
+            "username": "ASPI-000107",
+            "password": "ASPI-000107",
+            "ruolo": "user",
+            "nome": "G.D.M. S.P.A.",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 15,
+            "username": "ASPI-000108",
+            "password": "ASPI-000108",
+            "ruolo": "user",
+            "nome": "COMUNE DI TRAPANI",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 16,
+            "username": "ASPI-000109",
+            "password": "ASPI-000109",
+            "ruolo": "user",
+            "nome": "A.S.P. DI CATANIA",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 17,
+            "username": "ASPI-000110",
+            "password": "ASPI-000110",
+            "ruolo": "user",
+            "nome": "MAG CONFEZIONI S.P.A.",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 18,
+            "username": "ASPI-000115",
+            "password": "bloccato",
+            "ruolo": "user",
+            "nome": "A.S.P. DI CATANIA DISTR. OSP. CT 3",
+            "email": "a@a.it",
+            "attivo": true,
+            "tecnico_id": null
+        },
+        {
+            "id": 19,
+            "username": "ASPI-000118",
+            "password": "ASPI-000118",
+            "ruolo": "user",
+            "nome": "AZ. OSPEDALIERA UNIVER. DI MES",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 20,
+            "username": "ASPI-000120",
+            "password": "ASPI-000120",
+            "ruolo": "user",
+            "nome": "A.S.P. DI MESSINA",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 21,
+            "username": "ASPI-000121",
+            "password": "ASPI-000121",
+            "ruolo": "user",
+            "nome": "POST  MODA S.R.L.",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 22,
+            "username": "ASPI-000123",
+            "password": "ASPI-000123",
+            "ruolo": "user",
+            "nome": "RADIO TELEVISIONE PELORITANA S",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 23,
+            "username": "ASPI-000139",
+            "password": "ASPI-000139",
+            "ruolo": "user",
+            "nome": "CONSORZIO AGRARIO INTERPROV.LE",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 24,
+            "username": "ASPI-000140",
+            "password": "ASPI-000140",
+            "ruolo": "user",
+            "nome": "COMUNE DI SOMMATINO",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 25,
+            "username": "ASPI-000141",
+            "password": "ASPI-000141",
+            "ruolo": "user",
+            "nome": "COMUNE DI SAN G.NNI LA PUNTA",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 26,
+            "username": "ASPI-000144",
+            "password": "ASPI-000144",
+            "ruolo": "user",
+            "nome": "FONDAZIONE UBERTO BONINO ",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 27,
+            "username": "ASPI-000146",
+            "password": "ASPI-000146",
+            "ruolo": "user",
+            "nome": "TESSILPAPER DI SCAFFIDI",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 28,
+            "username": "ASPI-000148",
+            "password": "ASPI-000148",
+            "ruolo": "user",
+            "nome": "AGRIS - BRUMI S.R.L.",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 29,
+            "username": "ASPI-000149",
+            "password": "ASPI-000149",
+            "ruolo": "user",
+            "nome": "SIPAFER S.P.A.",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 30,
+            "username": "ASPI-000153",
+            "password": "ASPI-000153",
+            "ruolo": "user",
+            "nome": "PROVINCIA REGIONALE DI RAGUSA",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 31,
+            "username": "ASPI-000162",
+            "password": "ASPI-000162",
+            "ruolo": "user",
+            "nome": "G.D.S. EUROPA s.r.l.",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 32,
+            "username": "ASPI-000166",
+            "password": "ASPI-000166",
+            "ruolo": "user",
+            "nome": "ASPI SERVIZI INFORMATICI S.C.A",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 33,
+            "username": "ASPI-000167",
+            "password": "ASPI-000167",
+            "ruolo": "user",
+            "nome": "NUOVA DE LUCA TRE S.p.A.",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 34,
+            "username": "ASPI-000205",
+            "password": "ASPI-000205",
+            "ruolo": "user",
+            "nome": "CASSA EDILE MESSINA",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 35,
+            "username": "ASPI-000211",
+            "password": "ASPI-000211",
+            "ruolo": "user",
+            "nome": "SIPLAST S.P.A.",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 36,
+            "username": "ASPI-000217",
+            "password": "ASPI-000217",
+            "ruolo": "user",
+            "nome": "AZIENDA OSPEDALIERA GARIBALDI",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 37,
+            "username": "ASPI-000224",
+            "password": "ASPI-000224",
+            "ruolo": "user",
+            "nome": "MOLINI GAZZI S.P.A.",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 38,
+            "username": "ASPI-000228",
+            "password": "ASPI-000228",
+            "ruolo": "user",
+            "nome": "COMUNE DI MESSINA",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 39,
+            "username": "ASPI-000238",
+            "password": "ASPI-000238",
+            "ruolo": "user",
+            "nome": "AZ. OSP. UNIV. POL. \"G. RODOLI",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 40,
+            "username": "ASPI-000249",
+            "password": "ASPI-000249",
+            "ruolo": "user",
+            "nome": "DI MARTINO SRL",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 41,
+            "username": "ASPI-000300",
+            "password": "!bloccato$",
+            "ruolo": "user",
+            "nome": "SP ENERGIA SICILIANA SRL",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 42,
+            "username": "ASPI-000316",
+            "password": "ASPI-000316",
+            "ruolo": "user",
+            "nome": "UNIVER. DEGLI STUDI DI MESSINA",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 43,
+            "username": "ASPI-000440",
+            "password": "ASPI-000440",
+            "ruolo": "user",
+            "nome": "ESSO MEDITERRANEA ICIOM S.R.L.",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 44,
+            "username": "ASPI-000482",
+            "password": "ASPI-000482",
+            "ruolo": "user",
+            "nome": "ADILE SALOTTI S.P.A.",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 45,
+            "username": "ASPI-000485",
+            "password": "ASPI-000485",
+            "ruolo": "user",
+            "nome": "C.I.A.P.I. DI SIRACUSA",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 46,
+            "username": "ASPI-000520",
+            "password": "ASPI-000520",
+            "ruolo": "user",
+            "nome": "ETNALL SPA",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 47,
+            "username": "ASPI-000546",
+            "password": "ASPI-000546",
+            "ruolo": "user",
+            "nome": "SIELTE S.P.A.",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 48,
+            "username": "ASPI-000691",
+            "password": "ASPI-000691",
+            "ruolo": "user",
+            "nome": "STANCAMPIANO S.P.A.",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 49,
+            "username": "ASPI-000698",
+            "password": "ASPI-000698",
+            "ruolo": "user",
+            "nome": "PAVONI & C SPA",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 113,
+            "username": "ASPI-000880",
+            "password": "ASPI-000880",
+            "ruolo": "user",
+            "nome": "AZ. OSPEDALIERA OSPEDALE RIUNITI PAPARDO-PIEMONTE",
+            "email": "a@a.it",
+            "attivo": false,
+            "tecnico_id": null
+        },
+        {
+            "id": 50,
+            "username": "ASPI-000924",
+            "password": "ASPI-000924",
+            "ruolo": "user",
+            "nome": "WELLCOMM ENGINEERING SPA",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 51,
+            "username": "ASPI-001006",
+            "password": "ASPI-001006",
+            "ruolo": "user",
+            "nome": "GESTIONI ESATTORIALI IRPINE SP",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 52,
+            "username": "ASPI-001042",
+            "password": "ASPI-001042",
+            "ruolo": "user",
+            "nome": "FARMADISTRIBUZIONE S.P.A.",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 53,
+            "username": "ASPI-001095",
+            "password": "ASPI-001095",
+            "ruolo": "user",
+            "nome": "HMO HEADWAY MANAGEMENT ORGANIZ",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 54,
+            "username": "ASPI-001107",
+            "password": "ASPI-001107",
+            "ruolo": "user",
+            "nome": "TECNE PROGETTI DI PIERLUIGI SP",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 55,
+            "username": "ASPI-001181",
+            "password": "ASPI-001181",
+            "ruolo": "user",
+            "nome": "SOFAD SRL",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 56,
+            "username": "ASPI-001245",
+            "password": "ASPI-001245",
+            "ruolo": "user",
+            "nome": "AZIENDA U.S.L. LECCE - AREA SU",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 57,
+            "username": "ASPI-001271",
+            "password": "ASPI-001271",
+            "ruolo": "user",
+            "nome": "CENTRO NEUROLESI BONINO PULEJO",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 182,
+            "username": "ASPI-001319",
+            "password": "ASPI-001319",
+            "ruolo": "user",
+            "nome": "001319-LIBERO CONSORZIO COMUNALE DI AGRIGENTO",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 58,
+            "username": "ASPI-001347",
+            "password": "ASPI-001347",
+            "ruolo": "user",
+            "nome": "ACCADEMIA DI BELLE ARTI DI CAT",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 190,
+            "username": "ASPI-001411",
+            "password": "ASPI-001411",
+            "ruolo": "user",
+            "nome": "001411-EASY DATA DI LORENZO SERRA",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 191,
+            "username": "ASPI-001431",
+            "password": "ASPI-001431",
+            "ruolo": "user",
+            "nome": "COMUNE DI TAORMINA Area Amm-Aff Gen-Serv Soc e Dem",
+            "email": null,
+            "attivo": false,
+            "tecnico_id": null
+        },
+        {
+            "id": 59,
+            "username": "ASPI-001611",
+            "password": "!bloccato$",
+            "ruolo": "user",
+            "nome": "A.S.P. DI ENNA",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 60,
+            "username": "ASPI-001639",
+            "password": "ASPI-001639",
+            "ruolo": "user",
+            "nome": "LEMARSISTEMI SRL",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 61,
+            "username": "ASPI-001694",
+            "password": "ASPI-001694",
+            "ruolo": "user",
+            "nome": "001694-ATB AUTOMATEN TECHNIK BAUMAN GmbH",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 62,
+            "username": "ASPI-001716",
+            "password": "!bloccato$",
+            "ruolo": "user",
+            "nome": "IDI INTEGRATORI DIETETICI ITALIANI S.R.L.",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 150,
+            "username": "ASPI-001717",
+            "password": "ASPI-001717",
+            "ruolo": "user",
+            "nome": "001717-COFFEE AND PASTA",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 63,
+            "username": "ASPI-001719",
+            "password": "Autobus2017",
+            "ruolo": "user",
+            "nome": "A.S.P. DI RAGUSA",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 64,
+            "username": "ASPI-001732",
+            "password": "bloccato",
+            "ruolo": "user",
+            "nome": "A.S.P. DI TRAPANI",
+            "email": null,
+            "attivo": false,
+            "tecnico_id": null
+        },
+        {
+            "id": 138,
+            "username": "ASPI-001773",
+            "password": "ASPI-001773",
+            "ruolo": "user",
+            "nome": "I.P.S.S.A.R. KAROL WOJTYLA",
+            "email": "ctrh03000c@istruzione.it",
+            "attivo": false,
+            "tecnico_id": null
+        },
+        {
+            "id": 65,
+            "username": "ASPI-001779",
+            "password": "ASPI-001779",
+            "ruolo": "user",
+            "nome": "EUROLOGISTIK COMPANY",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 203,
+            "username": "ASPI-002717",
+            "password": "ASPI-002717",
+            "ruolo": "user",
+            "nome": "COMUNE DI SAN GIOVANNI LA PUNTA - LL PP",
+            "email": null,
+            "attivo": false,
+            "tecnico_id": null
+        },
+        {
+            "id": 185,
+            "username": "ASPI-002934",
+            "password": "ASPI-002934",
+            "ruolo": "user",
+            "nome": "CATANIA RETE GAS SPA",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 146,
+            "username": "assistenza24",
+            "password": "!assistenza$",
+            "ruolo": "tecnico",
+            "nome": "assistenza24",
+            "email": null,
+            "attivo": false,
+            "tecnico_id": "98"
+        },
+        {
+            "id": 157,
+            "username": "atmservice",
+            "password": "Qwerty0$",
+            "ruolo": "tecnico",
+            "nome": "Atmservice",
+            "email": "atmservice@pec.it",
+            "attivo": false,
+            "tecnico_id": "109"
+        },
+        {
+            "id": 169,
+            "username": "audiolab",
+            "password": "Qw1210$",
+            "ruolo": "tecnico",
+            "nome": "Audiolab",
+            "email": "audiolabcat@gmail.com ",
+            "attivo": false,
+            "tecnico_id": "121"
+        },
+        {
+            "id": 119,
+            "username": "b.puglisi",
+            "password": "aspiPM1",
+            "ruolo": "project",
+            "nome": "Benedetto Puglisi",
+            "email": "b.puglisi@aspiservizi.it",
+            "attivo": false,
+            "tecnico_id": null
+        },
+        {
+            "id": 66,
+            "username": "barbagallo",
+            "password": "!bbg09$",
+            "ruolo": "service",
+            "nome": "Carlo Barbagallo",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 69,
+            "username": "bitservice",
+            "password": "!bitservice$",
+            "ruolo": "tecnico",
+            "nome": "Bit Service",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": "65"
+        },
+        {
+            "id": 163,
+            "username": "Blunova",
+            "password": "blu@23!",
+            "ruolo": "tecnico",
+            "nome": "BLUNOVA TRAPANI S.R.L.S.",
+            "email": "trapani@blunova.it",
+            "attivo": false,
+            "tecnico_id": "116"
+        },
+        {
+            "id": 120,
+            "username": "c.cardella",
+            "password": "aspiPM2",
+            "ruolo": "project",
+            "nome": "Carmelo Cardella",
+            "email": "c.cardella@aspiservizi.it",
+            "attivo": false,
+            "tecnico_id": null
+        },
+        {
+            "id": 100,
+            "username": "c.parano",
+            "password": "123456",
+            "ruolo": "project",
+            "nome": "Carola Parano",
+            "email": "c.parano@aspiservizi.it",
+            "attivo": false,
+            "tecnico_id": null
+        },
+        {
+            "id": 128,
+            "username": "c.parano_es",
+            "password": "123456",
+            "ruolo": "project",
+            "nome": "Carola Parano Esperto Senior",
+            "email": "g@g.it",
+            "attivo": false,
+            "tecnico_id": null
+        },
+        {
+            "id": 97,
+            "username": "c.testa",
+            "password": "345678",
+            "ruolo": "project",
+            "nome": "Carlo Testa",
+            "email": "c.testa@aspiservizi.it",
+            "attivo": false,
+            "tecnico_id": null
+        },
+        {
+            "id": 151,
+            "username": "cmservice",
+            "password": "!cmservice$",
+            "ruolo": "tecnico",
+            "nome": "cm service",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": "99"
+        },
+        {
+            "id": 165,
+            "username": "Cosmoservice",
+            "password": "cosmo0$",
+            "ruolo": "tecnico",
+            "nome": "Cosmo Service srl",
+            "email": "gianfrancocarta@tim.it",
+            "attivo": false,
+            "tecnico_id": "117"
+        },
+        {
+            "id": 159,
+            "username": "damiano",
+            "password": "!dmn018",
+            "ruolo": "tecnico",
+            "nome": "Viscuso Damiano",
+            "email": "d.viscuso@aspiservizi.it",
+            "attivo": false,
+            "tecnico_id": "111"
+        },
+        {
+            "id": 184,
+            "username": "Deni",
+            "password": "deni_003",
+            "ruolo": "tecnico",
+            "nome": "Deni Store",
+            "email": null,
+            "attivo": false,
+            "tecnico_id": "131"
+        },
+        {
+            "id": 71,
+            "username": "easydata",
+            "password": "!ets09$",
+            "ruolo": "tecnico",
+            "nome": "Easy Data",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": "48"
+        },
+        {
+            "id": 186,
+            "username": "Ergo",
+            "password": "Ergo",
+            "ruolo": "tecnico",
+            "nome": "Ergo Meccanica",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": "132"
+        },
+        {
+            "id": 130,
+            "username": "esterno.spot",
+            "password": "!espot$",
+            "ruolo": "tecnico",
+            "nome": "Santi Nania",
+            "email": "g@g.it",
+            "attivo": false,
+            "tecnico_id": "24"
+        },
+        {
+            "id": 72,
+            "username": "extima",
+            "password": "!xte09$",
+            "ruolo": "tecnico",
+            "nome": "Extima",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": "46"
+        },
+        {
+            "id": 126,
+            "username": "f.adamo",
+            "password": "123456",
+            "ruolo": "project",
+            "nome": "Flavio Adamo",
+            "email": "f.adamo@aspiservizi.it",
+            "attivo": false,
+            "tecnico_id": null
+        },
+        {
+            "id": 118,
+            "username": "f.dipietro",
+            "password": "aspiPM",
+            "ruolo": "project",
+            "nome": "Federica Di Pietro",
+            "email": "f.dipietro@aspiservizi.it",
+            "attivo": false,
+            "tecnico_id": null
+        },
+        {
+            "id": 73,
+            "username": "fabio",
+            "password": "!bio09$",
+            "ruolo": "service",
+            "nome": "Fabio Laino",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 133,
+            "username": "fast",
+            "password": "!pass$",
+            "ruolo": "tecnico",
+            "nome": "Fast Informatica",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": "87"
+        },
+        {
+            "id": 74,
+            "username": "faulisi",
+            "password": "!fsl09$",
+            "ruolo": "tecnico",
+            "nome": "Aldo Faulisi",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": "58"
+        },
+        {
+            "id": 75,
+            "username": "florio",
+            "password": "!florio$",
+            "ruolo": "tecnico",
+            "nome": "Giuseppe Florio",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": "1"
+        },
+        {
+            "id": 95,
+            "username": "g.arcifa",
+            "password": "hironx",
+            "ruolo": "project",
+            "nome": "Giovanni Arcifa",
+            "email": "g.arcifa@aspiservizi.it",
+            "attivo": false,
+            "tecnico_id": null
+        },
+        {
+            "id": 99,
+            "username": "g.benvegna",
+            "password": "Qwerty0$",
+            "ruolo": "project",
+            "nome": "Giorgio Benvegna",
+            "email": "g.benvegna@aspiservizi.it",
+            "attivo": false,
+            "tecnico_id": null
+        },
+        {
+            "id": 125,
+            "username": "g.casano",
+            "password": "123456",
+            "ruolo": "project",
+            "nome": "Giovanni Casano",
+            "email": "a@a.it",
+            "attivo": false,
+            "tecnico_id": null
+        },
+        {
+            "id": 123,
+            "username": "g.speciale",
+            "password": "123456",
+            "ruolo": "project",
+            "nome": "Giuseppe Speciale",
+            "email": "g@g.it",
+            "attivo": false,
+            "tecnico_id": null
+        },
+        {
+            "id": 141,
+            "username": "GCS",
+            "password": "!gcs09$",
+            "ruolo": "tecnico",
+            "nome": "GCS",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": "89"
+        },
+        {
+            "id": 174,
+            "username": "gds",
+            "password": "p8_gds_32",
+            "ruolo": "user",
+            "nome": "GIORNALE DI SICILIA EDITORIALE POLIGRAFICA SPA",
+            "email": "redazioneweb@gds.it",
+            "attivo": false,
+            "tecnico_id": null
+        },
+        {
+            "id": 171,
+            "username": "Giardina",
+            "password": "Gia20Aspi",
+            "ruolo": "tecnico",
+            "nome": "Giardina Giuseppe",
+            "email": "giardina@aspiservizi.it",
+            "attivo": false,
+            "tecnico_id": "123"
+        },
+        {
+            "id": 77,
+            "username": "giorgianni",
+            "password": "!ggn09$",
+            "ruolo": "service",
+            "nome": "Antonino Giorgianni",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 104,
+            "username": "gwp",
+            "password": "yhgtRFDE",
+            "ruolo": "tecnico",
+            "nome": "Giuseppe Prestia",
+            "email": "",
+            "attivo": false,
+            "tecnico_id": null
+        },
+        {
+            "id": 124,
+            "username": "i.zangara",
+            "password": "ignazioaspi",
+            "ruolo": "project",
+            "nome": "Ignazio Zangara",
+            "email": "a@a.it",
+            "attivo": false,
+            "tecnico_id": null
+        },
+        {
+            "id": 78,
+            "username": "informtechnisystem",
+            "password": "_1_2_3",
+            "ruolo": "tecnico",
+            "nome": "InformTechniSystem",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": "66"
+        },
+        {
+            "id": 167,
+            "username": "itsupply",
+            "password": "Qwerty0$",
+            "ruolo": "tecnico",
+            "nome": "IT Supply",
+            "email": "info@itsupply.it",
+            "attivo": false,
+            "tecnico_id": "119"
+        },
+        {
+            "id": 140,
+            "username": "joefox$",
+            "password": "JoeFox082015",
+            "ruolo": "admin",
+            "nome": "",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 79,
+            "username": "laura",
+            "password": "!ple09$",
+            "ruolo": "tecnico",
+            "nome": "Laura Lo Presti",
+            "email": "z@a.it",
+            "attivo": false,
+            "tecnico_id": "56"
+        },
+        {
+            "id": 80,
+            "username": "lopresti",
+            "password": "!lpr09$",
+            "ruolo": "service",
+            "nome": "Alfio Lo Presti",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 207,
+            "username": "LorenzoC",
+            "password": "59E98z$",
+            "ruolo": "tecnico",
+            "nome": "Lorenzo Castorina",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": "139"
+        },
+        {
+            "id": 109,
+            "username": "m.cugno",
+            "password": "m@r10",
+            "ruolo": "project",
+            "nome": "Mario Cugno",
+            "email": "m.cugno@aspiservizi.it",
+            "attivo": false,
+            "tecnico_id": null
+        },
+        {
+            "id": 122,
+            "username": "m.desavelli",
+            "password": "m.desavelli",
+            "ruolo": "project",
+            "nome": "Marianna De Savelli",
+            "email": "a@a.it",
+            "attivo": false,
+            "tecnico_id": null
+        },
+        {
+            "id": 147,
+            "username": "maintware",
+            "password": "!maintware$",
+            "ruolo": "tecnico",
+            "nome": "Maintware",
+            "email": null,
+            "attivo": false,
+            "tecnico_id": "97"
+        },
+        {
+            "id": 183,
+            "username": "Marino",
+            "password": "mar2021_aspi",
+            "ruolo": "tecnico",
+            "nome": "Giuseppe Marino",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": "122"
+        },
+        {
+            "id": 139,
+            "username": "mastrosimone",
+            "password": "!mas09$",
+            "ruolo": "tecnico",
+            "nome": "Antonio Mastrosimone",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": "88"
+        },
+        {
+            "id": 94,
+            "username": "maurizio",
+            "password": "!aur09$",
+            "ruolo": "tecnico",
+            "nome": "Maurizio Di Salvo",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": "3"
+        },
+        {
+            "id": 83,
+            "username": "negri",
+            "password": "!ngr09$",
+            "ruolo": "tecnico",
+            "nome": "Ivan Negri",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": "9"
+        },
+        {
+            "id": 84,
+            "username": "nicola",
+            "password": "!nicola$",
+            "ruolo": "tecnico",
+            "nome": "Nicola Nocita",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": "57"
+        },
+        {
+            "id": 161,
+            "username": "nicotra",
+            "password": "1234",
+            "ruolo": "tecnico",
+            "nome": "vincenzo",
+            "email": "v.nicotra@aspiservizi.it",
+            "attivo": false,
+            "tecnico_id": "8"
+        },
+        {
+            "id": 117,
+            "username": "orlando",
+            "password": "!Qwerty0$$",
+            "ruolo": "tecnico",
+            "nome": "Orlando Vincenzo",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": "73"
+        },
+        {
+            "id": 110,
+            "username": "p.loreto",
+            "password": "p@0l0",
+            "ruolo": "project",
+            "nome": "Paolo Loreto",
+            "email": "p.loreto@aspiservizi.it",
+            "attivo": false,
+            "tecnico_id": null
+        },
+        {
+            "id": 114,
+            "username": "papardo",
+            "password": "piemonte",
+            "ruolo": "user",
+            "nome": "Utente Papardo-Piemonte",
+            "email": "g@g.it",
+            "attivo": false,
+            "tecnico_id": null
+        },
+        {
+            "id": 85,
+            "username": "perria",
+            "password": "!per09$",
+            "ruolo": "tecnico",
+            "nome": "Michele Perria",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": "70"
+        },
+        {
+            "id": 127,
+            "username": "procura.catania",
+            "password": "passprct2012",
+            "ruolo": "project",
+            "nome": "Procura della Repubblica di Catania",
+            "email": "aa@aa.it",
+            "attivo": false,
+            "tecnico_id": null
+        },
+        {
+            "id": 129,
+            "username": "procura.siracusa",
+            "password": "prsr2012",
+            "ruolo": "project",
+            "nome": "Procura della Repubblica di Siracusa",
+            "email": "g@g.it",
+            "attivo": false,
+            "tecnico_id": null
+        },
+        {
+            "id": 98,
+            "username": "projectmanager",
+            "password": "passpm",
+            "ruolo": "projectmanager",
+            "nome": "Aspi Project Manager",
+            "email": "g.benvegna@aspiservizi.it",
+            "attivo": false,
+            "tecnico_id": null
+        },
+        {
+            "id": 158,
+            "username": "Protech",
+            "password": "Qwerty0$",
+            "ruolo": "tecnico",
+            "nome": "Protech",
+            "email": "info@protechonline.it",
+            "attivo": false,
+            "tecnico_id": "110"
+        },
+        {
+            "id": 175,
+            "username": "rtp",
+            "password": "z5_rtp_13",
+            "ruolo": "user",
+            "nome": "RADIO TELEVISIONE PELORITANA SRL",
+            "email": "amministrazione@rtptv.it",
+            "attivo": false,
+            "tecnico_id": null
+        },
+        {
+            "id": 101,
+            "username": "s.fabiano",
+            "password": "123456",
+            "ruolo": "project",
+            "nome": "Santo Fabiano",
+            "email": "s.fabiano@aspiservizi.it",
+            "attivo": false,
+            "tecnico_id": null
+        },
+        {
+            "id": 103,
+            "username": "s.franchina",
+            "password": "jknkjldc6546",
+            "ruolo": "project",
+            "nome": "Samuele Franchina",
+            "email": "xfranchina@tiscali.it",
+            "attivo": false,
+            "tecnico_id": null
+        },
+        {
+            "id": 88,
+            "username": "salvo",
+            "password": "!svl09$",
+            "ruolo": "tecnico",
+            "nome": "Salvo Dell'Utri",
+            "email": "s.dellutri@aspiservizi.it",
+            "attivo": false,
+            "tecnico_id": "10"
+        },
+        {
+            "id": 154,
+            "username": "samitek",
+            "password": "!samitek$",
+            "ruolo": "tecnico",
+            "nome": "Samitek",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": "96"
+        },
+        {
+            "id": 112,
+            "username": "scsmike",
+            "password": "Qwerty0$",
+            "ruolo": "service",
+            "nome": "Mike",
+            "email": "mike@scs.it",
+            "attivo": true,
+            "tecnico_id": null
+        },
+        {
+            "id": 173,
+            "username": "SesSpa",
+            "password": "y3_ses_20",
+            "ruolo": "user",
+            "nome": "S.E.S. - SOCIETA' EDITRICE SUD S.P.A.",
+            "email": "amministrazione@gazzettadelsud.it",
+            "attivo": false,
+            "tecnico_id": null
+        },
+        {
+            "id": 168,
+            "username": "Simoncini",
+            "password": "Qwerty0$",
+            "ruolo": "tecnico",
+            "nome": "Giuseppe Simoncini",
+            "email": "tezzz@texxxz.it",
+            "attivo": false,
+            "tecnico_id": "120"
+        },
+        {
+            "id": 160,
+            "username": "smartnet",
+            "password": "Smart00!",
+            "ruolo": "tecnico",
+            "nome": "smartnet",
+            "email": "norberto78@tin.it",
+            "attivo": false,
+            "tecnico_id": "72"
+        },
+        {
+            "id": 89,
+            "username": "stefano",
+            "password": "!stf09$",
+            "ruolo": "tecnico",
+            "nome": "Stefano Basile",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": "2"
+        },
+        {
+            "id": 90,
+            "username": "sti",
+            "password": "!sti$",
+            "ruolo": "tecnico",
+            "nome": "STI Toscana",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": "54"
+        },
+        {
+            "id": 170,
+            "username": "T&T",
+            "password": "19T&TAS",
+            "ruolo": "tecnico",
+            "nome": "T&T",
+            "email": "INFO@WSBGFIOVR.IT",
+            "attivo": false,
+            "tecnico_id": "40"
+        },
+        {
+            "id": 204,
+            "username": "TECCOMM",
+            "password": "TECCOMM",
+            "ruolo": "tecnico",
+            "nome": "TECCOMM",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": "136"
+        },
+        {
+            "id": 91,
+            "username": "telecom",
+            "password": "telecom",
+            "ruolo": "StoricoTelecom",
+            "nome": "Telecom",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 166,
+            "username": "Tesi",
+            "password": "Qwerty0$",
+            "ruolo": "tecnico",
+            "nome": "Tesi service s.r.l.",
+            "email": "info@tesi-service.it",
+            "attivo": false,
+            "tecnico_id": "118"
+        },
+        {
+            "id": 181,
+            "username": "testApi",
+            "password": "539",
+            "ruolo": "tecnico",
+            "nome": "Giuseppe Prestia",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": "104"
+        },
+        {
+            "id": 162,
+            "username": "testapp",
+            "password": "testapp",
+            "ruolo": "tecnico",
+            "nome": "testapp",
+            "email": "TESTAPP@ASPISERVIZI.IT",
+            "attivo": false,
+            "tecnico_id": "115"
+        },
+        {
+            "id": 131,
+            "username": "tribunale.siracusa",
+            "password": "pass@12",
+            "ruolo": "project",
+            "nome": "Tribunale Siracusa",
+            "email": "g@g.it",
+            "attivo": false,
+            "tecnico_id": null
+        },
+        {
+            "id": 116,
+            "username": "u-000092",
+            "password": "u-000092",
+            "ruolo": "user",
+            "nome": "Operatore Contratto 575",
+            "email": "a@a.it",
+            "attivo": false,
+            "tecnico_id": null
+        },
+        {
+            "id": 108,
+            "username": "v.corradino",
+            "password": "123456",
+            "ruolo": "project",
+            "nome": "Vittorio Corradino",
+            "email": "v.corradino@aspiservizi.it",
+            "attivo": false,
+            "tecnico_id": null
+        },
+        {
+            "id": 107,
+            "username": "v.cristaldi",
+            "password": "akjdw5465",
+            "ruolo": "project",
+            "nome": "Vincenzo Cristaldi",
+            "email": "vincenzocristaldi@learningacad.it",
+            "attivo": false,
+            "tecnico_id": null
+        },
+        {
+            "id": 92,
+            "username": "vincenzo",
+            "password": "!nce09$",
+            "ruolo": "service",
+            "nome": "Vincenzo Nicotra",
+            "email": null,
+            "attivo": null,
+            "tecnico_id": null
+        },
+        {
+            "id": 153,
+            "username": "Vindigni",
+            "password": "Autobus2017",
+            "ruolo": "user",
+            "nome": "Vindigni",
+            "email": null,
+            "attivo": false,
+            "tecnico_id": null
+        },
+        {
+            "id": 164,
+            "username": "Viola",
+            "password": "Qwerty0$",
+            "ruolo": "tecnico",
+            "nome": "Viola Sebastiano",
+            "email": "serivl@hotmail.it",
+            "attivo": false,
+            "tecnico_id": "108"
+        }
+    ],
+    "count": 159,
+    "durationMs": 6
+}
