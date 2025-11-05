@@ -254,9 +254,9 @@ app.MapGet("/db/users/{id}", async (string id) =>
         await conn.OpenAsync();
 
         var sql = @"
-            SELECT UTENTE_ID, USERNAME, PASSWORD, RUOLO, NOME, COGNOME, EMAIL, ATTIVO, TECNICO_ID
-            FROM AP_UTENTI
-            WHERE UTENTE_ID = @id AND ATTIVO = 1";
+            SELECT ID as id, USERNAME as username, PASSWORD as password, role as ruolo, RAG_SOC as nome, email as email, block as attivo, TECNICO_ID as tecnico_id
+            FROM MSSql32801.utenti
+            WHERE ID = @id";
 
         await using var cmd = new SqlCommand(sql, conn) { CommandTimeout = 15 };
         cmd.Parameters.AddWithValue("@id", int.Parse(id));
@@ -345,7 +345,8 @@ app.MapGet("/db/eventi/{id}", async (string id) =>
     }
 });
 
-// Update evento - TEMPORARILY DISABLED for production testing
+// Update evento
+// ⚠️ DISABLED FOR PRODUCTION - Endpoint modifica evento
 /*
 app.MapPut("/db/eventi/{id}", async (string id, UpdateEventoReq req) =>
 {
@@ -397,6 +398,7 @@ app.MapPut("/db/eventi/{id}", async (string id, UpdateEventoReq req) =>
 });
 */
 
+
 // Get interventi by evento ID
 app.MapGet("/db/eventi/{eventoId}/interventi", async (string eventoId, int page = 1, int size = 50) =>
 {
@@ -408,14 +410,45 @@ app.MapGet("/db/eventi/{eventoId}/interventi", async (string eventoId, int page 
         await using var conn = new SqlConnection(connStr);
         await conn.OpenAsync();
 
-        // Count query
-        var countSql = "SELECT COUNT(*) as total_count FROM TEK_INTERVENTI WHERE EVENTO_ID = @eventoId";
+        // First, get the WORKORDER of the parent evento
+        var getWorkorderSql = "SELECT WORKORDER FROM MSSql32801.RDI_OPEN WHERE EVENTO_ID = @eventoId";
+        string? workorder = null;
+        
+        await using (var workorderCmd = new SqlCommand(getWorkorderSql, conn) { CommandTimeout = 15 })
+        {
+            workorderCmd.Parameters.AddWithValue("@eventoId", int.Parse(eventoId));
+            workorder = (await workorderCmd.ExecuteScalarAsync()) as string;
+        }
+        
+        if (string.IsNullOrEmpty(workorder))
+        {
+            // Evento not found or has no workorder, return empty result
+            sw.Stop();
+            return Results.Json(new
+            {
+                success = true,
+                data = new List<object>(),
+                meta = new
+                {
+                    page,
+                    size,
+                    total = 0,
+                    total_pages = 0,
+                    has_next = false,
+                    has_previous = false
+                },
+                durationMs = sw.ElapsedMilliseconds
+            });
+        }
+
+        // Count query - filter by WORKORDER
+        var countSql = "SELECT COUNT(*) as total_count FROM MSSql32801.INT_OPEN WHERE WORKORDER = @workorder";
 
         var total = 0;
         try
         {
             await using var countCmd = new SqlCommand(countSql, conn) { CommandTimeout = 15 };
-            countCmd.Parameters.AddWithValue("@eventoId", int.Parse(eventoId));
+            countCmd.Parameters.AddWithValue("@workorder", workorder);
             total = (int)await countCmd.ExecuteScalarAsync();
         }
         catch
@@ -427,17 +460,16 @@ app.MapGet("/db/eventi/{eventoId}/interventi", async (string eventoId, int page 
         var rows = new List<Dictionary<string, object?>>();
         try
         {
-            // Data query
+            // Data query - filter by WORKORDER
             var dataSql = @"
-                SELECT INTERVENTO_ID, EVENTO_ID, DATA_INTERVENTO, ORA_INTERVENTO, DESCRIZIONE_INTERVENTO,
-                       TIPO_INTERVENTO, STATO_INTERVENTO, TECNICO_ID, NOTE_INTERVENTO
-                FROM TEK_INTERVENTI
-                WHERE EVENTO_ID = @eventoId
-                ORDER BY DATA_INTERVENTO DESC, ORA_INTERVENTO DESC
+                SELECT *
+                FROM MSSql32801.INT_OPEN
+                WHERE WORKORDER = @workorder
+                ORDER BY DATA_EVENTO DESC
                 OFFSET @offset ROWS FETCH NEXT @size ROWS ONLY";
 
             await using var dataCmd = new SqlCommand(dataSql, conn) { CommandTimeout = 15 };
-            dataCmd.Parameters.AddWithValue("@eventoId", int.Parse(eventoId));
+            dataCmd.Parameters.AddWithValue("@workorder", workorder);
             dataCmd.Parameters.AddWithValue("@offset", (page - 1) * size);
             dataCmd.Parameters.AddWithValue("@size", size);
 
@@ -483,8 +515,9 @@ app.MapGet("/db/eventi/{eventoId}/interventi", async (string eventoId, int page 
     }
 });
 
-// Create intervento - TEMPORARILY DISABLED for production testing
+// ⚠️ DISABLED FOR PRODUCTION - Endpoint crea intervento
 /*
+// Create intervento
 app.MapPost("/db/interventi", async (CreateInterventoReq req) =>
 {
     var connStr = Environment.GetEnvironmentVariable("SQL_CONN") ?? DEFAULT_SQL_CONN;
@@ -495,21 +528,58 @@ app.MapPost("/db/interventi", async (CreateInterventoReq req) =>
         await using var conn = new SqlConnection(connStr);
         await conn.OpenAsync();
 
+        // Get the WORKORDER from the parent evento (RDI_OPEN table)
+        var getWorkorderSql = "SELECT WORKORDER FROM MSSql32801.RDI_OPEN WHERE EVENTO_ID = @eventoId";
+        string? workorder = null;
+        
+        await using (var workorderCmd = new SqlCommand(getWorkorderSql, conn) { CommandTimeout = 15 })
+        {
+            workorderCmd.Parameters.AddWithValue("@eventoId", req.EventoId);
+            workorder = (await workorderCmd.ExecuteScalarAsync()) as string;
+        }
+        
+        if (string.IsNullOrEmpty(workorder))
+        {
+            sw.Stop();
+            return Results.Json(new { ok = false, error = "EVENTO_NOT_FOUND", durationMs = sw.ElapsedMilliseconds }, statusCode: 404);
+        }
+
+        // Generate a new unique EVENTO_ID (get max + 1)
+        var getMaxEventoIdSql = "SELECT ISNULL(MAX(EVENTO_ID), 0) + 1 FROM MSSql32801.INT_OPEN";
+        int newEventoId = 1;
+        
+        await using (var maxCmd = new SqlCommand(getMaxEventoIdSql, conn) { CommandTimeout = 15 })
+        {
+            var result = await maxCmd.ExecuteScalarAsync();
+            if (result != null && result != DBNull.Value)
+            {
+                newEventoId = Convert.ToInt32(result);
+            }
+        }
+
+        // INSERT with generated EVENTO_ID and parent's WORKORDER
         var sql = @"
-            INSERT INTO MSSql32801.TEK_INTERVENTI (EVENTO_ID, DATA_INTERVENTO, ORA_INTERVENTO, DESCRIZIONE_INTERVENTO,
-                                                  TIPO_INTERVENTO, STATO_INTERVENTO, TECNICO_ID, NOTE_INTERVENTO)
-            VALUES (@eventoId, @dataIntervento, @oraIntervento, @descrizioneIntervento, @tipoIntervento,
-                    @statoIntervento, @tecnicoId, @noteIntervento)";
+            INSERT INTO MSSql32801.INT_OPEN (EVENTO_ID, WORKORDER, TECNICO_ID, COD_TIPO_EVENTO, DES_TIPO_EVENTO,
+                                             DESCRIZIONE_EVENTO, STATO, DES_STATO, ESITO_EVENTO, DATA_EVENTO,
+                                             ORA_ARRIVO, ORA_CHIUSURA, ORE_VIAGGIO, ORE_IMPEGNATE)
+            VALUES (@eventoId, @workorder, @tecnicoId, @codTipoEvento, @desTipoEvento,
+                    @descrizioneEvento, @stato, @desStato, 0, @dataEvento,
+                    @oraArrivo, @oraChiusura, @oreViaggio, @oreImpegnate)";
 
         await using var cmd = new SqlCommand(sql, conn) { CommandTimeout = 15 };
-        cmd.Parameters.AddWithValue("@eventoId", req.EventoId);
-        cmd.Parameters.AddWithValue("@dataIntervento", req.DataIntervento ?? DateTime.Now.ToString("yyyy-MM-dd"));
-        cmd.Parameters.AddWithValue("@oraIntervento", req.OraIntervento ?? DateTime.Now.ToString("HH:mm:ss"));
-        cmd.Parameters.AddWithValue("@descrizioneIntervento", req.DescrizioneIntervento ?? "");
-        cmd.Parameters.AddWithValue("@tipoIntervento", req.TipoIntervento ?? "");
-        cmd.Parameters.AddWithValue("@statoIntervento", req.StatoIntervento ?? "A");
+        cmd.Parameters.AddWithValue("@eventoId", newEventoId);
+        cmd.Parameters.AddWithValue("@workorder", workorder);
         cmd.Parameters.AddWithValue("@tecnicoId", req.TecnicoId ?? "");
-        cmd.Parameters.AddWithValue("@noteIntervento", req.NoteIntervento ?? "");
+        cmd.Parameters.AddWithValue("@codTipoEvento", req.TipoIntervento ?? "");
+        cmd.Parameters.AddWithValue("@desTipoEvento", req.DescrizioneTipo ?? "");
+        cmd.Parameters.AddWithValue("@descrizioneEvento", req.DescrizioneIntervento ?? "");
+        cmd.Parameters.AddWithValue("@stato", req.StatoIntervento ?? "01");
+        cmd.Parameters.AddWithValue("@desStato", req.DescrizioneStato ?? "");
+        cmd.Parameters.AddWithValue("@dataEvento", req.DataIntervento ?? DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+        cmd.Parameters.AddWithValue("@oraArrivo", (object?)req.OraArrivo ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("@oraChiusura", (object?)req.OraChiusura ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("@oreViaggio", (object?)req.OreViaggio ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("@oreImpegnate", (object?)req.OreImpegnate ?? DBNull.Value);
 
         var affected = await cmd.ExecuteNonQueryAsync();
 
@@ -529,6 +599,65 @@ app.MapPost("/db/interventi", async (CreateInterventoReq req) =>
     }
 });
 */
+
+// ⚠️ DISABLED FOR PRODUCTION - Endpoint modifica intervento
+/*
+// Update intervento
+app.MapPut("/db/interventi/{eventoId:int}", async (int eventoId, CreateInterventoReq req) =>
+{
+    var connStr = Environment.GetEnvironmentVariable("SQL_CONN") ?? DEFAULT_SQL_CONN;
+
+    var sw = System.Diagnostics.Stopwatch.StartNew();
+    try
+    {
+        await using var conn = new SqlConnection(connStr);
+        await conn.OpenAsync();
+
+        // UPDATE intervento
+        var sql = @"
+            UPDATE MSSql32801.INT_OPEN
+            SET COD_TIPO_EVENTO = @codTipoEvento,
+                DES_TIPO_EVENTO = @desTipoEvento,
+                DESCRIZIONE_EVENTO = @descrizioneEvento,
+                STATO = @stato,
+                DES_STATO = @desStato,
+                ORA_ARRIVO = @oraArrivo,
+                ORA_CHIUSURA = @oraChiusura,
+                ORE_VIAGGIO = @oreViaggio,
+                ORE_IMPEGNATE = @oreImpegnate
+            WHERE EVENTO_ID = @eventoId";
+
+        await using var cmd = new SqlCommand(sql, conn) { CommandTimeout = 15 };
+        cmd.Parameters.AddWithValue("@eventoId", eventoId);
+        cmd.Parameters.AddWithValue("@codTipoEvento", req.TipoIntervento ?? "");
+        cmd.Parameters.AddWithValue("@desTipoEvento", req.DescrizioneTipo ?? "");
+        cmd.Parameters.AddWithValue("@descrizioneEvento", req.DescrizioneIntervento ?? "");
+        cmd.Parameters.AddWithValue("@stato", req.StatoIntervento ?? "01");
+        cmd.Parameters.AddWithValue("@desStato", req.DescrizioneStato ?? "");
+        cmd.Parameters.AddWithValue("@oraArrivo", (object?)req.OraArrivo ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("@oraChiusura", (object?)req.OraChiusura ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("@oreViaggio", (object?)req.OreViaggio ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("@oreImpegnate", (object?)req.OreImpegnate ?? DBNull.Value);
+
+        var affected = await cmd.ExecuteNonQueryAsync();
+
+        sw.Stop();
+        return Results.Json(new
+        {
+            success = true,
+            affected,
+            durationMs = sw.ElapsedMilliseconds
+        });
+    }
+    catch (Exception ex)
+    {
+        sw.Stop();
+        app.Logger.LogError(ex, "DB interventi update error");
+        return Results.Json(new { ok = false, error = "DB_ERROR", durationMs = sw.ElapsedMilliseconds }, statusCode: 500);
+    }
+});
+*/
+
 
 // Get tipi intervento
 app.MapGet("/db/interventi/tipi", async () =>
@@ -704,11 +833,16 @@ public record UpdateEventoReq(
 );
 public record CreateInterventoReq(
     int EventoId,
-    string? DataIntervento = null,
-    string? OraIntervento = null,
-    string? DescrizioneIntervento = null,
-    string? TipoIntervento = null,
-    string? StatoIntervento = null,
+    string? Workorder = null,
     string? TecnicoId = null,
-    string? NoteIntervento = null
+    string? TipoIntervento = null,
+    string? DescrizioneTipo = null,
+    string? DescrizioneIntervento = null,
+    string? StatoIntervento = null,
+    string? DescrizioneStato = null,
+    string? DataIntervento = null,
+    string? OraArrivo = null,
+    string? OraChiusura = null,
+    string? OreViaggio = null,
+    string? OreImpegnate = null
 );

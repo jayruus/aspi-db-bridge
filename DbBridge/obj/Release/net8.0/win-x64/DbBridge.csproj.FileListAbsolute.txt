@@ -55,3 +55,4 @@
 /Users/jacopoturchi/Documents/private/projects/aspi/aspi-asp/DbBridge/bin/Release/net8.0/win-x64/DbBridge.staticwebassets.endpoints.json
 /Users/jacopoturchi/Documents/private/projects/aspi/aspi-asp/DbBridge/obj/Release/net8.0/win-x64/staticwebassets.build.endpoints.json
 /Users/jacopoturchi/Documents/private/projects/aspi/aspi-asp/DbBridge/obj/Release/net8.0/win-x64/staticwebassets/msbuild.DbBridge.Microsoft.AspNetCore.StaticWebAssetEndpoints.props
+/Users/jacopoturchi/Documents/private/projects/aspi/aspi-asp/DbBridge/obj/Release/net8.0/win-x64/DbBridge.sourcelink.json

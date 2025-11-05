@@ -16,7 +16,6 @@ RUN dotnet publish DbBridge/DbBridge.csproj -c Release -o /app /p:UseAppHost=fal
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 COPY --from=build /app ./
-COPY --from=build /src/DbBridge/SqlTemplates ./SqlTemplates
 
 # Ascolta su 0.0.0.0:5001 in container
 ENV ASPNETCORE_URLS=http://0.0.0.0:5001
