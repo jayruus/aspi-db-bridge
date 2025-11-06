@@ -183,7 +183,13 @@ app.MapPost("/db/eventi/tecnico", async (EventiByTecnicoReq req) =>
     {
         sw.Stop();
         app.Logger.LogError(ex, "DB eventi/tecnico error");
-        return Results.Json(new { ok = false, error = "DB_ERROR", message = ex.Message, durationMs = sw.ElapsedMilliseconds }, statusCode: 500);
+        return Results.Json(new { 
+            ok = false, 
+            error = "DB_ERROR",
+            error_code = "DB_ERROR",
+            message = ex.Message, 
+            durationMs = sw.ElapsedMilliseconds 
+        }, statusCode: 500);
     }
 });
 
@@ -211,7 +217,13 @@ app.MapPost("/db/auth/login", async (LoginReq req) =>
         if (!await reader.ReadAsync())
         {
             sw.Stop();
-            return Results.Json(new { ok = false, error = "USER_NOT_FOUND", durationMs = sw.ElapsedMilliseconds }, statusCode: 401);
+            return Results.Json(new { 
+                ok = false, 
+                error = "USER_NOT_FOUND",
+                error_code = "USER_NOT_FOUND",
+                message = "User not found",
+                durationMs = sw.ElapsedMilliseconds 
+            }, statusCode: 401);
         }
 
         var user = new Dictionary<string, object?>();
@@ -223,7 +235,13 @@ app.MapPost("/db/auth/login", async (LoginReq req) =>
         if (dbPassword != req.Password)
         {
             sw.Stop();
-            return Results.Json(new { ok = false, error = "INVALID_PASSWORD", durationMs = sw.ElapsedMilliseconds }, statusCode: 401);
+            return Results.Json(new { 
+                ok = false, 
+                error = "INVALID_PASSWORD",
+                error_code = "INVALID_PASSWORD",
+                message = "Invalid password",
+                durationMs = sw.ElapsedMilliseconds 
+            }, statusCode: 401);
         }
 
         sw.Stop();
@@ -238,7 +256,13 @@ app.MapPost("/db/auth/login", async (LoginReq req) =>
     {
         sw.Stop();
         app.Logger.LogError(ex, "DB auth/login error");
-        return Results.Json(new { ok = false, error = "DB_ERROR", message = ex.Message, durationMs = sw.ElapsedMilliseconds }, statusCode: 500);
+        return Results.Json(new { 
+            ok = false, 
+            error = "DB_ERROR",
+            error_code = "DB_ERROR",
+            message = ex.Message, 
+            durationMs = sw.ElapsedMilliseconds 
+        }, statusCode: 500);
     }
 });
 
@@ -265,7 +289,13 @@ app.MapGet("/db/users/{id}", async (string id) =>
         if (!await reader.ReadAsync())
         {
             sw.Stop();
-            return Results.Json(new { ok = false, error = "USER_NOT_FOUND", durationMs = sw.ElapsedMilliseconds }, statusCode: 404);
+            return Results.Json(new { 
+                ok = false, 
+                error = "USER_NOT_FOUND",
+                error_code = "USER_NOT_FOUND",
+                message = "User not found",
+                durationMs = sw.ElapsedMilliseconds 
+            }, statusCode: 404);
         }
 
         var user = new Dictionary<string, object?>();
@@ -284,7 +314,13 @@ app.MapGet("/db/users/{id}", async (string id) =>
     {
         sw.Stop();
         app.Logger.LogError(ex, "DB users/{id} error", id);
-        return Results.Json(new { ok = false, error = "DB_ERROR", durationMs = sw.ElapsedMilliseconds }, statusCode: 500);
+        return Results.Json(new { 
+            ok = false, 
+            error = "DB_ERROR",
+            error_code = "DB_ERROR",
+            message = "Database error",
+            durationMs = sw.ElapsedMilliseconds 
+        }, statusCode: 500);
     }
 });
 
@@ -322,7 +358,13 @@ app.MapGet("/db/eventi/{id}", async (string id) =>
         if (!await reader.ReadAsync())
         {
             sw.Stop();
-            return Results.Json(new { ok = false, error = "EVENTO_NOT_FOUND", durationMs = sw.ElapsedMilliseconds }, statusCode: 404);
+            return Results.Json(new { 
+                ok = false, 
+                error = "EVENTO_NOT_FOUND",
+                error_code = "EVENTO_NOT_FOUND",
+                message = "Event not found",
+                durationMs = sw.ElapsedMilliseconds 
+            }, statusCode: 404);
         }
 
         var evento = new Dictionary<string, object?>();
@@ -341,7 +383,13 @@ app.MapGet("/db/eventi/{id}", async (string id) =>
     {
         sw.Stop();
         app.Logger.LogError(ex, "DB eventi/{id} error", id);
-        return Results.Json(new { ok = false, error = "DB_ERROR", durationMs = sw.ElapsedMilliseconds }, statusCode: 500);
+        return Results.Json(new { 
+            ok = false, 
+            error = "DB_ERROR",
+            error_code = "DB_ERROR",
+            message = "Database error",
+            durationMs = sw.ElapsedMilliseconds 
+        }, statusCode: 500);
     }
 });
 
@@ -511,7 +559,13 @@ app.MapGet("/db/eventi/{eventoId}/interventi", async (string eventoId, int page 
     {
         sw.Stop();
         app.Logger.LogError(ex, "DB eventi/{eventoId}/interventi error", eventoId);
-        return Results.Json(new { ok = false, error = "DB_ERROR", durationMs = sw.ElapsedMilliseconds }, statusCode: 500);
+        return Results.Json(new { 
+            ok = false, 
+            error = "DB_ERROR",
+            error_code = "DB_ERROR",
+            message = "Database error",
+            durationMs = sw.ElapsedMilliseconds 
+        }, statusCode: 500);
     }
 });
 
@@ -541,7 +595,13 @@ app.MapPost("/db/interventi", async (CreateInterventoReq req) =>
         if (string.IsNullOrEmpty(workorder))
         {
             sw.Stop();
-            return Results.Json(new { ok = false, error = "EVENTO_NOT_FOUND", durationMs = sw.ElapsedMilliseconds }, statusCode: 404);
+            return Results.Json(new { 
+                ok = false, 
+                error = "EVENTO_NOT_FOUND",
+                error_code = "EVENTO_NOT_FOUND",
+                message = "Event not found",
+                durationMs = sw.ElapsedMilliseconds 
+            }, statusCode: 404);
         }
 
         // Generate a new unique EVENTO_ID (get max + 1)
@@ -595,7 +655,13 @@ app.MapPost("/db/interventi", async (CreateInterventoReq req) =>
     {
         sw.Stop();
         app.Logger.LogError(ex, "DB interventi create error");
-        return Results.Json(new { ok = false, error = "DB_ERROR", durationMs = sw.ElapsedMilliseconds }, statusCode: 500);
+        return Results.Json(new { 
+            ok = false, 
+            error = "DB_ERROR",
+            error_code = "DB_ERROR",
+            message = "Database error",
+            durationMs = sw.ElapsedMilliseconds 
+        }, statusCode: 500);
     }
 });
 */
@@ -653,7 +719,13 @@ app.MapPut("/db/interventi/{eventoId:int}", async (int eventoId, CreateIntervent
     {
         sw.Stop();
         app.Logger.LogError(ex, "DB interventi update error");
-        return Results.Json(new { ok = false, error = "DB_ERROR", durationMs = sw.ElapsedMilliseconds }, statusCode: 500);
+        return Results.Json(new { 
+            ok = false, 
+            error = "DB_ERROR",
+            error_code = "DB_ERROR",
+            message = "Database error",
+            durationMs = sw.ElapsedMilliseconds 
+        }, statusCode: 500);
     }
 });
 */
@@ -712,7 +784,13 @@ app.MapGet("/db/interventi/tipi", async () =>
     {
         sw.Stop();
         app.Logger.LogError(ex, "DB interventi/tipi error");
-        return Results.Json(new { ok = false, error = "DB_ERROR", durationMs = sw.ElapsedMilliseconds }, statusCode: 500);
+        return Results.Json(new { 
+            ok = false, 
+            error = "DB_ERROR",
+            error_code = "DB_ERROR",
+            message = "Database error",
+            durationMs = sw.ElapsedMilliseconds 
+        }, statusCode: 500);
     }
 });
 
@@ -769,7 +847,13 @@ app.MapGet("/db/interventi/stati", async () =>
     {
         sw.Stop();
         app.Logger.LogError(ex, "DB interventi/stati error");
-        return Results.Json(new { ok = false, error = "DB_ERROR", durationMs = sw.ElapsedMilliseconds }, statusCode: 500);
+        return Results.Json(new { 
+            ok = false, 
+            error = "DB_ERROR",
+            error_code = "DB_ERROR",
+            message = "Database error",
+            durationMs = sw.ElapsedMilliseconds 
+        }, statusCode: 500);
     }
 });
 
