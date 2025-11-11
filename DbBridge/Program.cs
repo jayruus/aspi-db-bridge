@@ -14,7 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Production database connection string (temporary for testing)
 const string DEFAULT_SQL_CONN = "Data Source=yb6irbxs4f.zoneyb.mssql-aruba.it;Initial Catalog=MSSql32801;User ID=MSSql32801;Password=bb81a3cc;TrustServerCertificate=True;";
-
+var isLocal = Environment.GetEnvironmentVariable("LOCAL") ?? "false";
 // Services
 
 var app = builder.Build();
@@ -52,7 +52,21 @@ app.MapPost("/db/eventi/tecnico", async (EventiByTecnicoReq req) =>
         // Altri filtri
         if (!string.IsNullOrEmpty(req.Search))
         {
-            whereConditions.Add("(RDI_OPEN.EVENTO_ID LIKE @search OR RDI_OPEN.RAG_SOC_CF LIKE @search OR RDI_OPEN.COMUNE_DESTINAZIONE LIKE @search OR RDI_OPEN.WORKORDER LIKE @search OR RDI_OPEN.DESCRIZIONE_EVENTO LIKE @search)");
+            whereConditions.Add(@"(
+                RDI_OPEN.WORKORDER LIKE @search OR 
+                RDI_OPEN.CODCHI_E LIKE @search OR 
+                RDI_OPEN.RAG_SOC_CF LIKE @search OR 
+                RDI_OPEN.COMUNE_DESTINAZIONE LIKE @search OR 
+                RDI_OPEN.PROVINCIA_DESTINAZIONE LIKE @search OR 
+                RDI_OPEN.INDI_DEST_MERCE LIKE @search OR 
+                RDI_OPEN.DEVICE LIKE @search OR 
+                RDI_OPEN.CONTATTO LIKE @search OR 
+                RDI_OPEN.DESCRIZIONE_EVENTO LIKE @search OR 
+                RDI_OPEN.NOTE_EVENTO LIKE @search OR 
+                RDI_OPEN.DES_TIPO_EVENTO LIKE @search OR 
+                RDI_OPEN.UTENTE_INOLTRO LIKE @search OR 
+                CONVERT(VARCHAR, RDI_OPEN.DATA_RICHIESTA_CLI, 23) LIKE @search
+            )");
             parameters["@search"] = $"%{req.Search}%";
         }
 
@@ -108,6 +122,10 @@ app.MapPost("/db/eventi/tecnico", async (EventiByTecnicoReq req) =>
                 "date_asc" => "ORDER BY RDI_OPEN.DATA_RICHIESTA_CLI ASC",
                 "priority_desc" => "ORDER BY RDI_OPEN.PRIORITA DESC, RDI_OPEN.DATA_RICHIESTA_CLI DESC",
                 "priority_asc" => "ORDER BY RDI_OPEN.PRIORITA ASC, RDI_OPEN.DATA_RICHIESTA_CLI DESC",
+                "cliente_asc" => "ORDER BY RDI_OPEN.RAG_SOC_CF ASC",
+                "cliente_desc" => "ORDER BY RDI_OPEN.RAG_SOC_CF DESC",
+                "comune_asc" => "ORDER BY RDI_OPEN.COMUNE_DESTINAZIONE ASC",
+                "comune_desc" => "ORDER BY RDI_OPEN.COMUNE_DESTINAZIONE DESC",
                 _ => orderBy
             };
         }
@@ -133,7 +151,7 @@ app.MapPost("/db/eventi/tecnico", async (EventiByTecnicoReq req) =>
                    RDI_OPEN.ORA_MAX as ora_max, RDI_OPEN.DATA_PIANIFICA as data_pianifica, RDI_OPEN.PRIORITA as priorita,
                    RDI_OPEN.COD_TIPO_EVENTO as cod_tipo_evento, RDI_OPEN.DES_TIPO_EVENTO as des_tipo_evento,
                    RDI_OPEN.NOTE_EVENTO as note_evento, '' as nome_tecnico,
-                   RDI_OPEN.DES_STATO as des_stato, RDI_OPEN.RAG_SOC_CF as cliente, RDI_OPEN.CONTATTO as contatto,
+                   RDI_OPEN.DES_STATO as des_stato, RDI_OPEN.RAG_SOC_CF as cliente, RDI_OPEN.COD_CF as cod_cf, RDI_OPEN.CONTATTO as contatto,
                    RDI_OPEN.TEL_CF as telefono, RDI_OPEN.TEL_CONTATTO as telefono_contatto,
                    RDI_OPEN.CELL_CONTATTO as cellulare, RDI_OPEN.DEVICE as device,
                    RDI_OPEN.INDI_DEST_MERCE as indirizzo, RDI_OPEN.COMUNE_DESTINAZIONE as comune,
@@ -343,7 +361,7 @@ app.MapGet("/db/eventi/{id}", async (string id) =>
                    RDI_OPEN.ORA_MAX as ora_max, RDI_OPEN.DATA_PIANIFICA as data_pianifica, RDI_OPEN.PRIORITA as priorita,
                    RDI_OPEN.COD_TIPO_EVENTO as cod_tipo_evento, RDI_OPEN.DES_TIPO_EVENTO as des_tipo_evento,
                    RDI_OPEN.NOTE_EVENTO as note_evento, '' as nome_tecnico,
-                   RDI_OPEN.DES_STATO as des_stato, RDI_OPEN.RAG_SOC_CF as cliente, RDI_OPEN.CONTATTO as contatto,
+                   RDI_OPEN.DES_STATO as des_stato, RDI_OPEN.RAG_SOC_CF as cliente, RDI_OPEN.COD_CF as cod_cf, RDI_OPEN.CONTATTO as contatto,
                    RDI_OPEN.TEL_CF as telefono, RDI_OPEN.TEL_CONTATTO as telefono_contatto,
                    RDI_OPEN.CELL_CONTATTO as cellulare, RDI_OPEN.DEVICE as device,
                    RDI_OPEN.INDI_DEST_MERCE as indirizzo, RDI_OPEN.COMUNE_DESTINAZIONE as comune,
@@ -394,58 +412,207 @@ app.MapGet("/db/eventi/{id}", async (string id) =>
 });
 
 // Update evento
-// ⚠️ DISABLED FOR PRODUCTION - Endpoint modifica evento
-/*
 app.MapPut("/db/eventi/{id}", async (string id, UpdateEventoReq req) =>
 {
     var connStr = Environment.GetEnvironmentVariable("SQL_CONN") ?? DEFAULT_SQL_CONN;
 
-    var sw = System.Diagnostics.Stopwatch.StartNew();
-    try
-    {
-        await using var conn = new SqlConnection(connStr);
-        await conn.OpenAsync();
-
-        var updateFields = new List<string>();
-        var parameters = new Dictionary<string, object>();
-
-        if (!string.IsNullOrEmpty(req.Stato)) { updateFields.Add("STATO = @stato"); parameters["@stato"] = req.Stato; }
-        if (!string.IsNullOrEmpty(req.EsitoEvento)) { updateFields.Add("ESITO_EVENTO = @esito_evento"); parameters["@esito_evento"] = req.EsitoEvento; }
-        if (!string.IsNullOrEmpty(req.TecnicoId)) { updateFields.Add("TECNICO_ID = @tecnico_id"); parameters["@tecnico_id"] = req.TecnicoId; }
-        if (!string.IsNullOrEmpty(req.DataPianifica)) { updateFields.Add("DATA_PIANIFICA = @data_pianifica"); parameters["@data_pianifica"] = req.DataPianifica; }
-        if (!string.IsNullOrEmpty(req.OraPianifica)) { updateFields.Add("ORA_PIANIFICA = @ora_pianifica"); parameters["@ora_pianifica"] = req.OraPianifica; }
-        if (!string.IsNullOrEmpty(req.Priorita)) { updateFields.Add("PRIORITA = @priorita"); parameters["@priorita"] = req.Priorita; }
-        if (!string.IsNullOrEmpty(req.NoteEvento)) { updateFields.Add("NOTE_EVENTO = @note_evento"); parameters["@note_evento"] = req.NoteEvento; }
-
-        if (updateFields.Count == 0)
-            return Results.Json(new { ok = false, error = "NO_FIELDS_TO_UPDATE", durationMs = sw.ElapsedMilliseconds }, statusCode: 400);
-
-        var sql = $"UPDATE RDI_OPEN SET {string.Join(", ", updateFields)} WHERE EVENTO_ID = @id";
-        parameters["@id"] = int.Parse(id);
-
-        await using var cmd = new SqlCommand(sql, conn) { CommandTimeout = 15 };
-        foreach (var (k, v) in parameters)
-            cmd.Parameters.AddWithValue(k, v ?? DBNull.Value);
-
-        var affected = await cmd.ExecuteNonQueryAsync();
-
-        sw.Stop();
-        return Results.Json(new
+        var sw = System.Diagnostics.Stopwatch.StartNew();
+        try
         {
-            success = true,
-            affected,
-            durationMs = sw.ElapsedMilliseconds
-        });
-    }
-    catch (Exception ex)
-    {
-        sw.Stop();
-        app.Logger.LogError(ex, "DB eventi/{id} update error", id);
-        return Results.Json(new { ok = false, error = "DB_ERROR", durationMs = sw.ElapsedMilliseconds }, statusCode: 500);
-    }
-});
-*/
+            await using var conn = new SqlConnection(connStr);
+            await conn.OpenAsync();
 
+            var updateFields = new List<string>();
+            var parameters = new Dictionary<string, object>();
+
+            if (!string.IsNullOrEmpty(req.Stato)) { updateFields.Add("STATO = @stato"); parameters["@stato"] = req.Stato; }
+            if (!string.IsNullOrEmpty(req.EsitoEvento)) { updateFields.Add("ESITO_EVENTO = @esito_evento"); parameters["@esito_evento"] = req.EsitoEvento; }
+            if (!string.IsNullOrEmpty(req.TecnicoId)) { updateFields.Add("TECNICO_ID = @tecnico_id"); parameters["@tecnico_id"] = req.TecnicoId; }
+            if (!string.IsNullOrEmpty(req.DataPianifica)) { updateFields.Add("DATA_PIANIFICA = @data_pianifica"); parameters["@data_pianifica"] = req.DataPianifica; }
+            if (!string.IsNullOrEmpty(req.OraPianifica)) { updateFields.Add("ORA_PIANIFICA = @ora_pianifica"); parameters["@ora_pianifica"] = req.OraPianifica; }
+            if (!string.IsNullOrEmpty(req.Priorita)) { updateFields.Add("PRIORITA = @priorita"); parameters["@priorita"] = req.Priorita; }
+            if (!string.IsNullOrEmpty(req.NoteEvento)) { updateFields.Add("NOTE_EVENTO = @note_evento"); parameters["@note_evento"] = req.NoteEvento; }
+
+            if (updateFields.Count == 0)
+                return Results.Json(new { ok = false, error = "NO_FIELDS_TO_UPDATE", durationMs = sw.ElapsedMilliseconds }, statusCode: 400);
+
+            var sql = $"UPDATE MSSql32801.RDI_OPEN SET {string.Join(", ", updateFields)} WHERE EVENTO_ID = @id";
+            parameters["@id"] = int.Parse(id);
+
+            await using var cmd = new SqlCommand(sql, conn) { CommandTimeout = 15 };
+            foreach (var (k, v) in parameters)
+                cmd.Parameters.AddWithValue(k, v ?? DBNull.Value);
+
+            var affected = await cmd.ExecuteNonQueryAsync();
+
+            sw.Stop();
+            return Results.Json(new
+            {
+                success = true,
+                affected,
+                durationMs = sw.ElapsedMilliseconds
+            });
+        }
+        catch (Exception ex)
+        {
+            sw.Stop();
+            app.Logger.LogError(ex, "DB eventi/{id} update error", id);
+            return Results.Json(new { ok = false, error = "DB_ERROR", durationMs = sw.ElapsedMilliseconds }, statusCode: 500);
+        }
+    });
+    // Update intervento
+    app.MapPut("/db/interventi/{eventoId:int}", async (int eventoId, CreateInterventoReq req) =>
+    {
+        var connStr = Environment.GetEnvironmentVariable("SQL_CONN") ?? DEFAULT_SQL_CONN;
+
+        var sw = System.Diagnostics.Stopwatch.StartNew();
+        try
+        {
+            await using var conn = new SqlConnection(connStr);
+            await conn.OpenAsync();
+
+            // UPDATE intervento
+            var sql = @"
+                UPDATE MSSql32801.INT_OPEN
+                SET COD_TIPO_EVENTO = @codTipoEvento,
+                    DES_TIPO_EVENTO = @desTipoEvento,
+                    DESCRIZIONE_EVENTO = @descrizioneEvento,
+                    STATO = @stato,
+                    DES_STATO = @desStato,
+                    ORA_ARRIVO = @oraArrivo,
+                    ORA_CHIUSURA = @oraChiusura,
+                    ORE_VIAGGIO = @oreViaggio,
+                    ORE_IMPEGNATE = @oreImpegnate
+                WHERE EVENTO_ID = @eventoId";
+
+            await using var cmd = new SqlCommand(sql, conn) { CommandTimeout = 15 };
+            cmd.Parameters.AddWithValue("@eventoId", eventoId);
+            cmd.Parameters.AddWithValue("@codTipoEvento", req.TipoIntervento ?? "");
+            cmd.Parameters.AddWithValue("@desTipoEvento", req.DescrizioneTipo ?? "");
+            cmd.Parameters.AddWithValue("@descrizioneEvento", req.DescrizioneIntervento ?? "");
+            cmd.Parameters.AddWithValue("@stato", req.StatoIntervento ?? "01");
+            cmd.Parameters.AddWithValue("@desStato", req.DescrizioneStato ?? "");
+            cmd.Parameters.AddWithValue("@oraArrivo", (object?)req.OraArrivo ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@oraChiusura", (object?)req.OraChiusura ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@oreViaggio", (object?)req.OreViaggio ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@oreImpegnate", (object?)req.OreImpegnate ?? DBNull.Value);
+
+            var affected = await cmd.ExecuteNonQueryAsync();
+
+            sw.Stop();
+            return Results.Json(new
+            {
+                success = true,
+                affected,
+                durationMs = sw.ElapsedMilliseconds
+            });
+        }
+        catch (Exception ex)
+        {
+            sw.Stop();
+            app.Logger.LogError(ex, "DB interventi update error");
+            return Results.Json(new { 
+                ok = false, 
+                error = "DB_ERROR",
+                error_code = "DB_ERROR",
+                message = "Database error",
+                durationMs = sw.ElapsedMilliseconds 
+            }, statusCode: 500);
+        }
+    });
+    // Create intervento
+    app.MapPost("/db/interventi", async (CreateInterventoReq req) =>
+    {
+        var connStr = Environment.GetEnvironmentVariable("SQL_CONN") ?? DEFAULT_SQL_CONN;
+
+        var sw = System.Diagnostics.Stopwatch.StartNew();
+        try
+        {
+            await using var conn = new SqlConnection(connStr);
+            await conn.OpenAsync();
+
+            // Get the WORKORDER from the parent evento (RDI_OPEN table)
+            var getWorkorderSql = "SELECT WORKORDER FROM MSSql32801.RDI_OPEN WHERE EVENTO_ID = @eventoId";
+            string? workorder = null;
+            
+            await using (var workorderCmd = new SqlCommand(getWorkorderSql, conn) { CommandTimeout = 15 })
+            {
+                workorderCmd.Parameters.AddWithValue("@eventoId", req.EventoId);
+                workorder = (await workorderCmd.ExecuteScalarAsync()) as string;
+            }
+            
+            if (string.IsNullOrEmpty(workorder))
+            {
+                sw.Stop();
+                return Results.Json(new { 
+                    ok = false, 
+                    error = "EVENTO_NOT_FOUND",
+                    error_code = "EVENTO_NOT_FOUND",
+                    message = "Event not found",
+                    durationMs = sw.ElapsedMilliseconds 
+                }, statusCode: 404);
+            }
+
+            // Generate a new unique EVENTO_ID (get max + 1)
+            var getMaxEventoIdSql = "SELECT ISNULL(MAX(EVENTO_ID), 0) + 1 FROM MSSql32801.INT_OPEN";
+            int newEventoId = 1;
+            
+            await using (var maxCmd = new SqlCommand(getMaxEventoIdSql, conn) { CommandTimeout = 15 })
+            {
+                var result = await maxCmd.ExecuteScalarAsync();
+                if (result != null && result != DBNull.Value)
+                {
+                    newEventoId = Convert.ToInt32(result);
+                }
+            }
+
+            // INSERT with generated EVENTO_ID and parent's WORKORDER
+            var sql = @"
+                INSERT INTO MSSql32801.INT_OPEN (EVENTO_ID, WORKORDER, TECNICO_ID, COD_TIPO_EVENTO, DES_TIPO_EVENTO,
+                                                DESCRIZIONE_EVENTO, STATO, DES_STATO, ESITO_EVENTO, DATA_EVENTO,
+                                                ORA_ARRIVO, ORA_CHIUSURA, ORE_VIAGGIO, ORE_IMPEGNATE)
+                VALUES (@eventoId, @workorder, @tecnicoId, @codTipoEvento, @desTipoEvento,
+                        @descrizioneEvento, @stato, @desStato, 0, @dataEvento,
+                        @oraArrivo, @oraChiusura, @oreViaggio, @oreImpegnate)";
+
+            await using var cmd = new SqlCommand(sql, conn) { CommandTimeout = 15 };
+            cmd.Parameters.AddWithValue("@eventoId", newEventoId);
+            cmd.Parameters.AddWithValue("@workorder", workorder);
+            cmd.Parameters.AddWithValue("@tecnicoId", req.TecnicoId ?? "");
+            cmd.Parameters.AddWithValue("@codTipoEvento", req.TipoIntervento ?? "");
+            cmd.Parameters.AddWithValue("@desTipoEvento", req.DescrizioneTipo ?? "");
+            cmd.Parameters.AddWithValue("@descrizioneEvento", req.DescrizioneIntervento ?? "");
+            cmd.Parameters.AddWithValue("@stato", req.StatoIntervento ?? "01");
+            cmd.Parameters.AddWithValue("@desStato", req.DescrizioneStato ?? "");
+            cmd.Parameters.AddWithValue("@dataEvento", req.DataIntervento ?? DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            cmd.Parameters.AddWithValue("@oraArrivo", (object?)req.OraArrivo ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@oraChiusura", (object?)req.OraChiusura ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@oreViaggio", (object?)req.OreViaggio ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@oreImpegnate", (object?)req.OreImpegnate ?? DBNull.Value);
+
+            var affected = await cmd.ExecuteNonQueryAsync();
+
+            sw.Stop();
+            return Results.Json(new
+            {
+                success = true,
+                affected,
+                durationMs = sw.ElapsedMilliseconds
+            });
+        }
+        catch (Exception ex)
+        {
+            sw.Stop();
+            app.Logger.LogError(ex, "DB interventi create error");
+            return Results.Json(new { 
+                ok = false, 
+                error = "DB_ERROR",
+                error_code = "DB_ERROR",
+                message = "Database error",
+                durationMs = sw.ElapsedMilliseconds 
+            }, statusCode: 500);
+        }
+    });
 
 // Get interventi by evento ID
 app.MapGet("/db/eventi/{eventoId}/interventi", async (string eventoId, int page = 1, int size = 50) =>
@@ -568,168 +735,6 @@ app.MapGet("/db/eventi/{eventoId}/interventi", async (string eventoId, int page 
         }, statusCode: 500);
     }
 });
-
-// ⚠️ DISABLED FOR PRODUCTION - Endpoint crea intervento
-/*
-// Create intervento
-app.MapPost("/db/interventi", async (CreateInterventoReq req) =>
-{
-    var connStr = Environment.GetEnvironmentVariable("SQL_CONN") ?? DEFAULT_SQL_CONN;
-
-    var sw = System.Diagnostics.Stopwatch.StartNew();
-    try
-    {
-        await using var conn = new SqlConnection(connStr);
-        await conn.OpenAsync();
-
-        // Get the WORKORDER from the parent evento (RDI_OPEN table)
-        var getWorkorderSql = "SELECT WORKORDER FROM MSSql32801.RDI_OPEN WHERE EVENTO_ID = @eventoId";
-        string? workorder = null;
-        
-        await using (var workorderCmd = new SqlCommand(getWorkorderSql, conn) { CommandTimeout = 15 })
-        {
-            workorderCmd.Parameters.AddWithValue("@eventoId", req.EventoId);
-            workorder = (await workorderCmd.ExecuteScalarAsync()) as string;
-        }
-        
-        if (string.IsNullOrEmpty(workorder))
-        {
-            sw.Stop();
-            return Results.Json(new { 
-                ok = false, 
-                error = "EVENTO_NOT_FOUND",
-                error_code = "EVENTO_NOT_FOUND",
-                message = "Event not found",
-                durationMs = sw.ElapsedMilliseconds 
-            }, statusCode: 404);
-        }
-
-        // Generate a new unique EVENTO_ID (get max + 1)
-        var getMaxEventoIdSql = "SELECT ISNULL(MAX(EVENTO_ID), 0) + 1 FROM MSSql32801.INT_OPEN";
-        int newEventoId = 1;
-        
-        await using (var maxCmd = new SqlCommand(getMaxEventoIdSql, conn) { CommandTimeout = 15 })
-        {
-            var result = await maxCmd.ExecuteScalarAsync();
-            if (result != null && result != DBNull.Value)
-            {
-                newEventoId = Convert.ToInt32(result);
-            }
-        }
-
-        // INSERT with generated EVENTO_ID and parent's WORKORDER
-        var sql = @"
-            INSERT INTO MSSql32801.INT_OPEN (EVENTO_ID, WORKORDER, TECNICO_ID, COD_TIPO_EVENTO, DES_TIPO_EVENTO,
-                                             DESCRIZIONE_EVENTO, STATO, DES_STATO, ESITO_EVENTO, DATA_EVENTO,
-                                             ORA_ARRIVO, ORA_CHIUSURA, ORE_VIAGGIO, ORE_IMPEGNATE)
-            VALUES (@eventoId, @workorder, @tecnicoId, @codTipoEvento, @desTipoEvento,
-                    @descrizioneEvento, @stato, @desStato, 0, @dataEvento,
-                    @oraArrivo, @oraChiusura, @oreViaggio, @oreImpegnate)";
-
-        await using var cmd = new SqlCommand(sql, conn) { CommandTimeout = 15 };
-        cmd.Parameters.AddWithValue("@eventoId", newEventoId);
-        cmd.Parameters.AddWithValue("@workorder", workorder);
-        cmd.Parameters.AddWithValue("@tecnicoId", req.TecnicoId ?? "");
-        cmd.Parameters.AddWithValue("@codTipoEvento", req.TipoIntervento ?? "");
-        cmd.Parameters.AddWithValue("@desTipoEvento", req.DescrizioneTipo ?? "");
-        cmd.Parameters.AddWithValue("@descrizioneEvento", req.DescrizioneIntervento ?? "");
-        cmd.Parameters.AddWithValue("@stato", req.StatoIntervento ?? "01");
-        cmd.Parameters.AddWithValue("@desStato", req.DescrizioneStato ?? "");
-        cmd.Parameters.AddWithValue("@dataEvento", req.DataIntervento ?? DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
-        cmd.Parameters.AddWithValue("@oraArrivo", (object?)req.OraArrivo ?? DBNull.Value);
-        cmd.Parameters.AddWithValue("@oraChiusura", (object?)req.OraChiusura ?? DBNull.Value);
-        cmd.Parameters.AddWithValue("@oreViaggio", (object?)req.OreViaggio ?? DBNull.Value);
-        cmd.Parameters.AddWithValue("@oreImpegnate", (object?)req.OreImpegnate ?? DBNull.Value);
-
-        var affected = await cmd.ExecuteNonQueryAsync();
-
-        sw.Stop();
-        return Results.Json(new
-        {
-            success = true,
-            affected,
-            durationMs = sw.ElapsedMilliseconds
-        });
-    }
-    catch (Exception ex)
-    {
-        sw.Stop();
-        app.Logger.LogError(ex, "DB interventi create error");
-        return Results.Json(new { 
-            ok = false, 
-            error = "DB_ERROR",
-            error_code = "DB_ERROR",
-            message = "Database error",
-            durationMs = sw.ElapsedMilliseconds 
-        }, statusCode: 500);
-    }
-});
-*/
-
-// ⚠️ DISABLED FOR PRODUCTION - Endpoint modifica intervento
-/*
-// Update intervento
-app.MapPut("/db/interventi/{eventoId:int}", async (int eventoId, CreateInterventoReq req) =>
-{
-    var connStr = Environment.GetEnvironmentVariable("SQL_CONN") ?? DEFAULT_SQL_CONN;
-
-    var sw = System.Diagnostics.Stopwatch.StartNew();
-    try
-    {
-        await using var conn = new SqlConnection(connStr);
-        await conn.OpenAsync();
-
-        // UPDATE intervento
-        var sql = @"
-            UPDATE MSSql32801.INT_OPEN
-            SET COD_TIPO_EVENTO = @codTipoEvento,
-                DES_TIPO_EVENTO = @desTipoEvento,
-                DESCRIZIONE_EVENTO = @descrizioneEvento,
-                STATO = @stato,
-                DES_STATO = @desStato,
-                ORA_ARRIVO = @oraArrivo,
-                ORA_CHIUSURA = @oraChiusura,
-                ORE_VIAGGIO = @oreViaggio,
-                ORE_IMPEGNATE = @oreImpegnate
-            WHERE EVENTO_ID = @eventoId";
-
-        await using var cmd = new SqlCommand(sql, conn) { CommandTimeout = 15 };
-        cmd.Parameters.AddWithValue("@eventoId", eventoId);
-        cmd.Parameters.AddWithValue("@codTipoEvento", req.TipoIntervento ?? "");
-        cmd.Parameters.AddWithValue("@desTipoEvento", req.DescrizioneTipo ?? "");
-        cmd.Parameters.AddWithValue("@descrizioneEvento", req.DescrizioneIntervento ?? "");
-        cmd.Parameters.AddWithValue("@stato", req.StatoIntervento ?? "01");
-        cmd.Parameters.AddWithValue("@desStato", req.DescrizioneStato ?? "");
-        cmd.Parameters.AddWithValue("@oraArrivo", (object?)req.OraArrivo ?? DBNull.Value);
-        cmd.Parameters.AddWithValue("@oraChiusura", (object?)req.OraChiusura ?? DBNull.Value);
-        cmd.Parameters.AddWithValue("@oreViaggio", (object?)req.OreViaggio ?? DBNull.Value);
-        cmd.Parameters.AddWithValue("@oreImpegnate", (object?)req.OreImpegnate ?? DBNull.Value);
-
-        var affected = await cmd.ExecuteNonQueryAsync();
-
-        sw.Stop();
-        return Results.Json(new
-        {
-            success = true,
-            affected,
-            durationMs = sw.ElapsedMilliseconds
-        });
-    }
-    catch (Exception ex)
-    {
-        sw.Stop();
-        app.Logger.LogError(ex, "DB interventi update error");
-        return Results.Json(new { 
-            ok = false, 
-            error = "DB_ERROR",
-            error_code = "DB_ERROR",
-            message = "Database error",
-            durationMs = sw.ElapsedMilliseconds 
-        }, statusCode: 500);
-    }
-});
-*/
-
 
 // Get tipi intervento
 app.MapGet("/db/interventi/tipi", async () =>
