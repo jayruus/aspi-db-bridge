@@ -1,5 +1,5 @@
 Cartella progetto ASP: aspi-asp
-Cartella progetto PHP: aspi-api-php
+Cartella progetto PHP: aspi-php-api
 
 Scenario
 

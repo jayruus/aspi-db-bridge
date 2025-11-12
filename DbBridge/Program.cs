@@ -14,8 +14,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Production database connection string (temporary for testing)
 const string DEFAULT_SQL_CONN = "Data Source=yb6irbxs4f.zoneyb.mssql-aruba.it;Initial Catalog=MSSql32801;User ID=MSSql32801;Password=bb81a3cc;TrustServerCertificate=True;";
-var isLocal = Environment.GetEnvironmentVariable("LOCAL") ?? "false";
-// Services
 
 var app = builder.Build();
 
