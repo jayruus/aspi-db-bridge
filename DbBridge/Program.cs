@@ -149,7 +149,7 @@ app.MapPost("/db/eventi/tecnico", async (EventiByTecnicoReq req) =>
                    RDI_OPEN.ORA_MAX as ora_max, RDI_OPEN.DATA_PIANIFICA as data_pianifica, RDI_OPEN.PRIORITA as priorita,
                    RDI_OPEN.COD_TIPO_EVENTO as cod_tipo_evento, RDI_OPEN.DES_TIPO_EVENTO as des_tipo_evento,
                    RDI_OPEN.NOTE_EVENTO as note_evento, '' as nome_tecnico,
-                   RDI_OPEN.DES_STATO as des_stato, RDI_OPEN.RAG_SOC_CF as cliente, RDI_OPEN.COD_CF as cod_cf, RDI_OPEN.CONTATTO as contatto,
+                   RDI_OPEN.DES_STATO as des_stato, RDI_OPEN.RAG_SOC_CF as cliente, RDI_OPEN.COD_CF as cod_cf, RDI_OPEN.CODCHI_E as codchi_e, RDI_OPEN.CONTATTO as contatto,
                    RDI_OPEN.TEL_CF as telefono, RDI_OPEN.TEL_CONTATTO as telefono_contatto,
                    RDI_OPEN.CELL_CONTATTO as cellulare, RDI_OPEN.DEVICE as device,
                    RDI_OPEN.INDI_DEST_MERCE as indirizzo, RDI_OPEN.COMUNE_DESTINAZIONE as comune,
