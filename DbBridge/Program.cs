@@ -471,6 +471,16 @@ app.MapPut("/db/eventi/{id}", async (string id, UpdateEventoReq req) =>
             await using var conn = new SqlConnection(connStr);
             await conn.OpenAsync();
 
+            // Ottieni il WORKORDER dell'intervento per aggiornare RDI_OPEN dopo
+            var getWorkorderSql = "SELECT WORKORDER FROM MSSql32801.INT_OPEN WHERE EVENTO_ID = @eventoId";
+            string? workorder = null;
+            
+            await using (var workorderCmd = new SqlCommand(getWorkorderSql, conn) { CommandTimeout = 15 })
+            {
+                workorderCmd.Parameters.AddWithValue("@eventoId", eventoId);
+                workorder = (await workorderCmd.ExecuteScalarAsync()) as string;
+            }
+
             // UPDATE intervento
             var sql = @"
                 UPDATE MSSql32801.INT_OPEN
@@ -482,8 +492,28 @@ app.MapPut("/db/eventi/{id}", async (string id, UpdateEventoReq req) =>
                     ORA_ARRIVO = @oraArrivo,
                     ORA_CHIUSURA = @oraChiusura,
                     ORE_VIAGGIO = @oreViaggio,
-                    ORE_IMPEGNATE = @oreImpegnate
+                    ORE_IMPEGNATE = @oreImpegnate,
+                    TEMPO_INTERVENTO = @tempoIntervento
                 WHERE EVENTO_ID = @eventoId";
+
+            // Calcola TEMPO_INTERVENTO come differenza tra ORA_CHIUSURA e ORA_ARRIVO
+            DateTime? tempoIntervento = null;
+            if (req.OraChiusura != null && req.OraArrivo != null)
+            {
+                try
+                {
+                    var chiusura = DateTime.Parse(req.OraChiusura);
+                    var arrivo = DateTime.Parse(req.OraArrivo);
+                    var diff = chiusura - arrivo;
+                    
+                    // Usa la data di chiusura con le ore/minuti della differenza
+                    tempoIntervento = chiusura.Date.AddHours(diff.Hours).AddMinutes(diff.Minutes);
+                }
+                catch
+                {
+                    // In caso di errore nel parsing, lascia null
+                }
+            }
 
             await using var cmd = new SqlCommand(sql, conn) { CommandTimeout = 15 };
             cmd.Parameters.AddWithValue("@eventoId", eventoId);
@@ -496,8 +526,26 @@ app.MapPut("/db/eventi/{id}", async (string id, UpdateEventoReq req) =>
             cmd.Parameters.AddWithValue("@oraChiusura", (object?)req.OraChiusura ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@oreViaggio", (object?)req.OreViaggio ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@oreImpegnate", (object?)req.OreImpegnate ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@tempoIntervento", (object?)tempoIntervento ?? DBNull.Value);
 
             var affected = await cmd.ExecuteNonQueryAsync();
+
+            // Aggiorna RDI_OPEN: svuota DATA_PIANIFICA e imposta ESITO_EVENTO se stato richiede attachment
+            if (!string.IsNullOrEmpty(workorder))
+            {
+                var stati_chiusura = new[] { "03", "06", "15", "16" };
+                var requiresAttachment = stati_chiusura.Contains(req.StatoIntervento ?? "");
+                
+                var updateRdiSql = requiresAttachment 
+                    ? "UPDATE MSSql32801.RDI_OPEN SET ESITO_EVENTO = 1, DATA_PIANIFICA = NULL WHERE WORKORDER = @workorder"
+                    : "UPDATE MSSql32801.RDI_OPEN SET DATA_PIANIFICA = NULL WHERE WORKORDER = @workorder";
+                
+                await using (var updateRdiCmd = new SqlCommand(updateRdiSql, conn) { CommandTimeout = 15 })
+                {
+                    updateRdiCmd.Parameters.AddWithValue("@workorder", workorder);
+                    await updateRdiCmd.ExecuteNonQueryAsync();
+                }
+            }
 
             sw.Stop();
             return Results.Json(new
@@ -570,10 +618,29 @@ app.MapPut("/db/eventi/{id}", async (string id, UpdateEventoReq req) =>
             var sql = @"
                 INSERT INTO MSSql32801.INT_OPEN (EVENTO_ID, WORKORDER, TECNICO_ID, COD_TIPO_EVENTO, DES_TIPO_EVENTO,
                                                 DESCRIZIONE_EVENTO, STATO, DES_STATO, ESITO_EVENTO, DATA_EVENTO,
-                                                ORA_ARRIVO, ORA_CHIUSURA, ORE_VIAGGIO, ORE_IMPEGNATE)
+                                                ORA_ARRIVO, ORA_CHIUSURA, ORE_VIAGGIO, ORE_IMPEGNATE, TEMPO_INTERVENTO)
                 VALUES (@eventoId, @workorder, @tecnicoId, @codTipoEvento, @desTipoEvento,
                         @descrizioneEvento, @stato, @desStato, 0, @dataEvento,
-                        @oraArrivo, @oraChiusura, @oreViaggio, @oreImpegnate)";
+                        @oraArrivo, @oraChiusura, @oreViaggio, @oreImpegnate, @tempoIntervento)";
+
+            // Calcola TEMPO_INTERVENTO come differenza tra ORA_CHIUSURA e ORA_ARRIVO
+            DateTime? tempoIntervento = null;
+            if (req.OraChiusura != null && req.OraArrivo != null)
+            {
+                try
+                {
+                    var chiusura = DateTime.Parse(req.OraChiusura);
+                    var arrivo = DateTime.Parse(req.OraArrivo);
+                    var diff = chiusura - arrivo;
+                    
+                    // Usa la data di chiusura con le ore/minuti della differenza
+                    tempoIntervento = chiusura.Date.AddHours(diff.Hours).AddMinutes(diff.Minutes);
+                }
+                catch
+                {
+                    // In caso di errore nel parsing, lascia null
+                }
+            }
 
             await using var cmd = new SqlCommand(sql, conn) { CommandTimeout = 15 };
             cmd.Parameters.AddWithValue("@eventoId", newEventoId);
@@ -589,8 +656,23 @@ app.MapPut("/db/eventi/{id}", async (string id, UpdateEventoReq req) =>
             cmd.Parameters.AddWithValue("@oraChiusura", (object?)req.OraChiusura ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@oreViaggio", (object?)req.OreViaggio ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@oreImpegnate", (object?)req.OreImpegnate ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@tempoIntervento", (object?)tempoIntervento ?? DBNull.Value);
 
             var affected = await cmd.ExecuteNonQueryAsync();
+
+            // Aggiorna RDI_OPEN: svuota DATA_PIANIFICA e imposta ESITO_EVENTO se stato richiede attachment
+            var stati_chiusura = new[] { "03", "06", "15", "16" };
+            var requiresAttachment = stati_chiusura.Contains(req.StatoIntervento ?? "");
+            
+            var updateRdiSql = requiresAttachment 
+                ? "UPDATE MSSql32801.RDI_OPEN SET ESITO_EVENTO = 1, DATA_PIANIFICA = NULL WHERE WORKORDER = @workorder"
+                : "UPDATE MSSql32801.RDI_OPEN SET DATA_PIANIFICA = NULL WHERE WORKORDER = @workorder";
+            
+            await using (var updateRdiCmd = new SqlCommand(updateRdiSql, conn) { CommandTimeout = 15 })
+            {
+                updateRdiCmd.Parameters.AddWithValue("@workorder", workorder);
+                await updateRdiCmd.ExecuteNonQueryAsync();
+            }
 
             sw.Stop();
             return Results.Json(new
