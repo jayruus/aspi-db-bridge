@@ -98,6 +98,18 @@ app.MapPost("/db/eventi/tecnico", async (EventiByTecnicoReq req) =>
             parameters["@dateTo"] = req.DateTo;
         }
 
+        if (!string.IsNullOrEmpty(req.DataPianificataFrom))
+        {
+            whereConditions.Add("RDI_OPEN.DATA_PIANIFICA >= @dataPianificataFrom");
+            parameters["@dataPianificataFrom"] = req.DataPianificataFrom;
+        }
+
+        if (!string.IsNullOrEmpty(req.DataPianificataTo))
+        {
+            whereConditions.Add("RDI_OPEN.DATA_PIANIFICA <= @dataPianificataTo");
+            parameters["@dataPianificataTo"] = req.DataPianificataTo;
+        }
+
         if (!string.IsNullOrEmpty(req.Priority))
         {
             whereConditions.Add("RDI_OPEN.PRIORITA = @priority");
@@ -221,11 +233,20 @@ app.MapPost("/db/auth/login", async (LoginReq req) =>
         await using var conn = new SqlConnection(connStr);
         await conn.OpenAsync();
 
-        // Find user by username
+        // Find user by username and get technician name from AP_TECNICI
         var userSql = @"
-            SELECT ID as id, USERNAME as username, PASSWORD as password, role as ruolo, RAG_SOC as nome, email as email, block as attivo, TECNICO_ID as tecnico_id
-            FROM MSSql32801.utenti
-            WHERE USERNAME = @username";
+            SELECT 
+                u.ID as id, 
+                u.USERNAME as username, 
+                u.PASSWORD as password, 
+                u.role as ruolo, 
+                u.email as email, 
+                u.block as attivo, 
+                u.TECNICO_ID as tecnico_id,
+                t.NOME_TECNICO as nome
+            FROM MSSql32801.utenti u
+            LEFT JOIN MSSql32801.AP_TECNICI t ON u.TECNICO_ID = t.TECNICO_ID
+            WHERE u.USERNAME = @username";
 
         await using var userCmd = new SqlCommand(userSql, conn) { CommandTimeout = 15 };
         userCmd.Parameters.AddWithValue("@username", req.Username);
@@ -497,6 +518,7 @@ app.MapPut("/db/eventi/{id}", async (string id, UpdateEventoReq req) =>
                 WHERE EVENTO_ID = @eventoId";
 
             // Calcola TEMPO_INTERVENTO come differenza tra ORA_CHIUSURA e ORA_ARRIVO
+            // Tutti i campi temporali devono usare la data 1900-01-01 (tracciamo solo le ore)
             DateTime? tempoIntervento = null;
             if (req.OraChiusura != null && req.OraArrivo != null)
             {
@@ -506,8 +528,8 @@ app.MapPut("/db/eventi/{id}", async (string id, UpdateEventoReq req) =>
                     var arrivo = DateTime.Parse(req.OraArrivo);
                     var diff = chiusura - arrivo;
                     
-                    // Usa la data di chiusura con le ore/minuti della differenza
-                    tempoIntervento = chiusura.Date.AddHours(diff.Hours).AddMinutes(diff.Minutes);
+                    // Usa 1900-01-01 con le ore/minuti della differenza
+                    tempoIntervento = new DateTime(1900, 1, 1).AddHours(diff.Hours).AddMinutes(diff.Minutes);
                 }
                 catch
                 {
@@ -624,6 +646,7 @@ app.MapPut("/db/eventi/{id}", async (string id, UpdateEventoReq req) =>
                         @oraArrivo, @oraChiusura, @oreViaggio, @oreImpegnate, @tempoIntervento)";
 
             // Calcola TEMPO_INTERVENTO come differenza tra ORA_CHIUSURA e ORA_ARRIVO
+            // Tutti i campi temporali devono usare la data 1900-01-01 (tracciamo solo le ore)
             DateTime? tempoIntervento = null;
             if (req.OraChiusura != null && req.OraArrivo != null)
             {
@@ -633,8 +656,8 @@ app.MapPut("/db/eventi/{id}", async (string id, UpdateEventoReq req) =>
                     var arrivo = DateTime.Parse(req.OraArrivo);
                     var diff = chiusura - arrivo;
                     
-                    // Usa la data di chiusura con le ore/minuti della differenza
-                    tempoIntervento = chiusura.Date.AddHours(diff.Hours).AddMinutes(diff.Minutes);
+                    // Usa 1900-01-01 con le ore/minuti della differenza
+                    tempoIntervento = new DateTime(1900, 1, 1).AddHours(diff.Hours).AddMinutes(diff.Minutes);
                 }
                 catch
                 {
@@ -988,6 +1011,8 @@ public record EventiByTecnicoReq(
     string? Provincia = null,
     string? DateFrom = null,
     string? DateTo = null,
+    string? DataPianificataFrom = null,
+    string? DataPianificataTo = null,
     string? Priority = null,
     string[]? Statuses = null,
     string? Sort = null
