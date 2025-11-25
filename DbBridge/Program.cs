@@ -997,6 +997,91 @@ static string FixEncoding(string text)
     return result;
 }
 
+    // Log pianificazione
+    app.MapPost("/db/log-pianifica", async (LogPianificaReq req) =>
+    {
+        var connStr = Environment.GetEnvironmentVariable("SQL_CONN") ?? DEFAULT_SQL_CONN;
+
+        var sw = System.Diagnostics.Stopwatch.StartNew();
+        try
+        {
+            app.Logger.LogInformation("🔄 LOG-PIANIFICA: Inizio chiamata con dati: Workorder={Workorder}, DataPianificazione={DataPianificazione}, Username={Username}, Origine={Origine}", 
+                req.Workorder, req.DataPianificazione, req.Username, req.Origine);
+            
+            await using var conn = new SqlConnection(connStr);
+            await conn.OpenAsync();
+
+            // Ottieni il nome del tecnico dall'username
+            string? nomeTecnico = null;
+            if (!string.IsNullOrEmpty(req.Username))
+            {
+                var tecnicoSql = @"
+                    SELECT t.NOME_TECNICO
+                    FROM MSSql32801.utenti u
+                    LEFT JOIN MSSql32801.AP_TECNICI t ON u.TECNICO_ID = t.TECNICO_ID
+                    WHERE u.USERNAME = @username";
+
+                await using var tecnicoCmd = new SqlCommand(tecnicoSql, conn) { CommandTimeout = 15 };
+                tecnicoCmd.Parameters.AddWithValue("@username", req.Username);
+                nomeTecnico = (await tecnicoCmd.ExecuteScalarAsync()) as string;
+            }
+
+            // Costruisci la query dinamicamente per gestire NULL in origine
+            var columns = new List<string> { "WORKORDER", "DATA_PIANIFICAZIONE", "DATA_ULTIMA_MODIFICA", "UTENTE_MODIFICA" };
+            var values = new List<string> { "@workorder", "@dataPianificazione", "@dataUltimaModifica", "@utenteModifica" };
+            
+            // Aggiungi origine solo se non è NULL (ma dato che è sempre NULL, non lo aggiungiamo)
+            // columns.Add("ORIGINE");
+            // values.Add("@origine");
+            
+            var sql = $@"
+                INSERT INTO MSSql32801.LOG_PIANIFICA 
+                ({string.Join(", ", columns)})
+                VALUES ({string.Join(", ", values)})";
+
+            await using var cmd = new SqlCommand(sql, conn) { CommandTimeout = 15 };
+            cmd.Parameters.AddWithValue("@workorder", req.Workorder ?? "");
+            cmd.Parameters.AddWithValue("@dataPianificazione", req.DataPianificazione ?? "");
+            
+            // Parse DataUltimaModifica from string to DateTime
+            DateTime dataUltimaModifica = DateTime.Now;
+            if (!string.IsNullOrEmpty(req.DataUltimaModifica))
+            {
+                if (!DateTime.TryParse(req.DataUltimaModifica, out dataUltimaModifica))
+                {
+                    app.Logger.LogWarning("LOG-PIANIFICA: Impossibile parsare DataUltimaModifica '{DataUltimaModifica}', uso DateTime.Now", req.DataUltimaModifica);
+                    dataUltimaModifica = DateTime.Now;
+                }
+            }
+            cmd.Parameters.AddWithValue("@dataUltimaModifica", dataUltimaModifica);
+            
+            cmd.Parameters.AddWithValue("@utenteModifica", nomeTecnico ?? ""); // Nome del tecnico ottenuto dall'username
+            // cmd.Parameters.AddWithValue("@origine", DBNull.Value); // Rimosso perché colonna non permette NULL
+
+            var affected = await cmd.ExecuteNonQueryAsync();
+            
+            sw.Stop();
+            return Results.Json(new
+            {
+                success = true,
+                affected,
+                durationMs = sw.ElapsedMilliseconds
+            });
+        }
+        catch (Exception ex)
+        {
+            sw.Stop();
+            app.Logger.LogError(ex, "❌ LOG-PIANIFICA: Errore nell'inserimento: {ErrorMessage}", ex.Message);
+            return Results.Json(new { 
+                ok = false, 
+                error = "DB_ERROR",
+                error_code = "DB_ERROR",
+                message = ex.Message, 
+                durationMs = sw.ElapsedMilliseconds 
+            }, statusCode: 500);
+        }
+    });
+
 app.Run();
 
 // DTO
@@ -1041,4 +1126,11 @@ public record CreateInterventoReq(
     string? OraChiusura = null,
     string? OreViaggio = null,
     string? OreImpegnate = null
+);
+public record LogPianificaReq(
+    string? Workorder = null,
+    string? DataPianificazione = null,
+    string? DataUltimaModifica = null,
+    string? Username = null, // Username dell'utente che ha fatto la modifica
+    string? Origine = null
 );
