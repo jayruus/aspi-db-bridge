@@ -1,6 +1,7 @@
 using DbBridge;
 using Microsoft.Data.SqlClient;
 using System.Data;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -440,6 +441,9 @@ app.MapPut("/db/eventi/{id}", async (string id, UpdateEventoReq req) =>
         var sw = System.Diagnostics.Stopwatch.StartNew();
         try
         {
+            // Definisci il timezone fisso per Europe/Rome
+            TimeZoneInfo romeTimeZone = TimeZoneInfo.FindSystemTimeZoneById("W. Europe Standard Time");
+
             await using var conn = new SqlConnection(connStr);
             await conn.OpenAsync();
 
@@ -598,6 +602,9 @@ app.MapPut("/db/eventi/{id}", async (string id, UpdateEventoReq req) =>
         var sw = System.Diagnostics.Stopwatch.StartNew();
         try
         {
+            // Definisci il timezone fisso per Europe/Rome
+            TimeZoneInfo romeTimeZone = TimeZoneInfo.FindSystemTimeZoneById("W. Europe Standard Time");
+
             await using var conn = new SqlConnection(connStr);
             await conn.OpenAsync();
 
@@ -638,10 +645,10 @@ app.MapPut("/db/eventi/{id}", async (string id, UpdateEventoReq req) =>
 
             // INSERT with generated EVENTO_ID and parent's WORKORDER
             var sql = @"
-                INSERT INTO MSSql32801.INT_OPEN (EVENTO_ID, WORKORDER, TECNICO_ID, COD_TIPO_EVENTO, DES_TIPO_EVENTO,
+                INSERT INTO MSSql32801.INT_OPEN (EVENTO_ID, WORKORDER, TECNICO_ID, NOME_TECNICO, COD_TIPO_EVENTO, DES_TIPO_EVENTO,
                                                 DESCRIZIONE_EVENTO, STATO, DES_STATO, ESITO_EVENTO, DATA_EVENTO,
                                                 ORA_ARRIVO, ORA_CHIUSURA, ORE_VIAGGIO, ORE_IMPEGNATE, TEMPO_INTERVENTO)
-                VALUES (@eventoId, @workorder, @tecnicoId, @codTipoEvento, @desTipoEvento,
+                VALUES (@eventoId, @workorder, @tecnicoId, @nomeTecnico, @codTipoEvento, @desTipoEvento,
                         @descrizioneEvento, @stato, @desStato, 0, @dataEvento,
                         @oraArrivo, @oraChiusura, @oreViaggio, @oreImpegnate, @tempoIntervento)";
 
@@ -669,12 +676,13 @@ app.MapPut("/db/eventi/{id}", async (string id, UpdateEventoReq req) =>
             cmd.Parameters.AddWithValue("@eventoId", newEventoId);
             cmd.Parameters.AddWithValue("@workorder", workorder);
             cmd.Parameters.AddWithValue("@tecnicoId", req.TecnicoId ?? "");
+            cmd.Parameters.AddWithValue("@nomeTecnico", req.NomeTecnico ?? "");
             cmd.Parameters.AddWithValue("@codTipoEvento", req.TipoIntervento ?? "");
             cmd.Parameters.AddWithValue("@desTipoEvento", req.DescrizioneTipo ?? "");
             cmd.Parameters.AddWithValue("@descrizioneEvento", req.DescrizioneIntervento ?? "");
             cmd.Parameters.AddWithValue("@stato", req.StatoIntervento ?? "01");
             cmd.Parameters.AddWithValue("@desStato", req.DescrizioneStato ?? "");
-            cmd.Parameters.AddWithValue("@dataEvento", req.DataIntervento ?? DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            cmd.Parameters.AddWithValue("@dataEvento", req.DataIntervento ?? TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, romeTimeZone).ToString("yyyy-MM-dd HH:mm:ss"));
             cmd.Parameters.AddWithValue("@oraArrivo", (object?)req.OraArrivo ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@oraChiusura", (object?)req.OraChiusura ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@oreViaggio", (object?)req.OreViaggio ?? DBNull.Value);
@@ -1005,26 +1013,17 @@ static string FixEncoding(string text)
         var sw = System.Diagnostics.Stopwatch.StartNew();
         try
         {
+            // Definisci il timezone fisso per Europe/Rome
+            TimeZoneInfo romeTimeZone = TimeZoneInfo.FindSystemTimeZoneById("W. Europe Standard Time");
+
             app.Logger.LogInformation("🔄 LOG-PIANIFICA: Inizio chiamata con dati: Workorder={Workorder}, DataPianificazione={DataPianificazione}, Username={Username}, Origine={Origine}", 
                 req.Workorder, req.DataPianificazione, req.Username, req.Origine);
             
             await using var conn = new SqlConnection(connStr);
             await conn.OpenAsync();
 
-            // Ottieni il nome del tecnico dall'username
-            string? nomeTecnico = null;
-            if (!string.IsNullOrEmpty(req.Username))
-            {
-                var tecnicoSql = @"
-                    SELECT t.NOME_TECNICO
-                    FROM MSSql32801.utenti u
-                    LEFT JOIN MSSql32801.AP_TECNICI t ON u.TECNICO_ID = t.TECNICO_ID
-                    WHERE u.USERNAME = @username";
-
-                await using var tecnicoCmd = new SqlCommand(tecnicoSql, conn) { CommandTimeout = 15 };
-                tecnicoCmd.Parameters.AddWithValue("@username", req.Username);
-                nomeTecnico = (await tecnicoCmd.ExecuteScalarAsync()) as string;
-            }
+            // Il campo Username ora contiene direttamente il nome del tecnico (da JWT)
+            string nomeTecnico = req.Username ?? "";
 
             // Costruisci la query dinamicamente per gestire NULL in origine
             var columns = new List<string> { "WORKORDER", "DATA_PIANIFICAZIONE", "DATA_ULTIMA_MODIFICA", "UTENTE_MODIFICA" };
@@ -1043,19 +1042,29 @@ static string FixEncoding(string text)
             cmd.Parameters.AddWithValue("@workorder", req.Workorder ?? "");
             cmd.Parameters.AddWithValue("@dataPianificazione", req.DataPianificazione ?? "");
             
-            // Parse DataUltimaModifica from string to DateTime
-            DateTime dataUltimaModifica = DateTime.Now;
+            // Parse DataUltimaModifica from string to DateTime (assumiamo sia UTC dal PHP)
+            DateTime dataUltimaModifica = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, romeTimeZone); // Default Rome time
             if (!string.IsNullOrEmpty(req.DataUltimaModifica))
             {
-                if (!DateTime.TryParse(req.DataUltimaModifica, out dataUltimaModifica))
+                if (DateTime.TryParse(req.DataUltimaModifica, out var parsedDate))
                 {
-                    app.Logger.LogWarning("LOG-PIANIFICA: Impossibile parsare DataUltimaModifica '{DataUltimaModifica}', uso DateTime.Now", req.DataUltimaModifica);
-                    dataUltimaModifica = DateTime.Now;
+                    // Assumiamo che la data dal PHP sia in UTC, convertiamola a Rome time
+                    if (parsedDate.Kind == DateTimeKind.Unspecified)
+                    {
+                        parsedDate = DateTime.SpecifyKind(parsedDate, DateTimeKind.Utc);
+                    }
+                    
+                    dataUltimaModifica = TimeZoneInfo.ConvertTimeFromUtc(parsedDate.ToUniversalTime(), romeTimeZone);
+                }
+                else
+                {
+                    app.Logger.LogWarning("LOG-PIANIFICA: Impossibile parsare DataUltimaModifica '{DataUltimaModifica}', uso UTC attuale convertito a Rome time", req.DataUltimaModifica);
+                    dataUltimaModifica = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, romeTimeZone);
                 }
             }
             cmd.Parameters.AddWithValue("@dataUltimaModifica", dataUltimaModifica);
             
-            cmd.Parameters.AddWithValue("@utenteModifica", nomeTecnico ?? ""); // Nome del tecnico ottenuto dall'username
+            cmd.Parameters.AddWithValue("@utenteModifica", nomeTecnico ?? ""); // Nome del tecnico ricevuto direttamente
             // cmd.Parameters.AddWithValue("@origine", DBNull.Value); // Rimosso perché colonna non permette NULL
 
             var affected = await cmd.ExecuteNonQueryAsync();
@@ -1116,6 +1125,7 @@ public record CreateInterventoReq(
     int EventoId,
     string? Workorder = null,
     string? TecnicoId = null,
+    string? NomeTecnico = null,
     string? TipoIntervento = null,
     string? DescrizioneTipo = null,
     string? DescrizioneIntervento = null,
