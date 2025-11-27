@@ -1016,9 +1016,6 @@ static string FixEncoding(string text)
             // Definisci il timezone fisso per Europe/Rome
             TimeZoneInfo romeTimeZone = TimeZoneInfo.FindSystemTimeZoneById("W. Europe Standard Time");
 
-            app.Logger.LogInformation("🔄 LOG-PIANIFICA: Inizio chiamata con dati: Workorder={Workorder}, DataPianificazione={DataPianificazione}, Username={Username}, Origine={Origine}", 
-                req.Workorder, req.DataPianificazione, req.Username, req.Origine);
-            
             await using var conn = new SqlConnection(connStr);
             await conn.OpenAsync();
 
