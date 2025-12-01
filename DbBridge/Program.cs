@@ -599,6 +599,8 @@ app.MapPut("/db/eventi/{id}", async (string id, UpdateEventoReq req) =>
     {
         var connStr = Environment.GetEnvironmentVariable("SQL_CONN") ?? DEFAULT_SQL_CONN;
 
+        Console.WriteLine($"🔧 [DbBridge] CreateIntervento called - EventoId: {req.EventoId}, TecnicoId: {req.TecnicoId}");
+
         var sw = System.Diagnostics.Stopwatch.StartNew();
         try
         {
@@ -672,7 +674,7 @@ app.MapPut("/db/eventi/{id}", async (string id, UpdateEventoReq req) =>
                 }
             }
 
-            await using var cmd = new SqlCommand(sql, conn) { CommandTimeout = 15 };
+            await using var cmd = new SqlCommand(sql, conn) { CommandTimeout = 30 };
             cmd.Parameters.AddWithValue("@eventoId", newEventoId);
             cmd.Parameters.AddWithValue("@workorder", workorder);
             cmd.Parameters.AddWithValue("@tecnicoId", req.TecnicoId ?? "");
@@ -706,16 +708,19 @@ app.MapPut("/db/eventi/{id}", async (string id, UpdateEventoReq req) =>
             }
 
             sw.Stop();
+            Console.WriteLine($"✅ [DbBridge] CreateIntervento completed successfully - Affected: {affected}, Duration: {sw.ElapsedMilliseconds}ms");
             return Results.Json(new
             {
                 success = true,
                 affected,
+                newEventoId,
                 durationMs = sw.ElapsedMilliseconds
             });
         }
         catch (Exception ex)
         {
             sw.Stop();
+            Console.WriteLine($"❌ [DbBridge] CreateIntervento failed - Duration: {sw.ElapsedMilliseconds}ms, Error: {ex.Message}");
             app.Logger.LogError(ex, "DB interventi create error");
             return Results.Json(new { 
                 ok = false, 
@@ -1031,7 +1036,7 @@ static string FixEncoding(string text)
             // values.Add("@origine");
             
             var sql = $@"
-                INSERT INTO MSSql32801.LOG_PIANIFICA 
+                INSERT INTO MSSql32801.log_pianifica 
                 ({string.Join(", ", columns)})
                 VALUES ({string.Join(", ", values)})";
 
