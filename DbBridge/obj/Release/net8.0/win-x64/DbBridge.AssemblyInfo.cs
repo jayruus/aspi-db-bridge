@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DbBridge")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+37040e95c4756d32db80c90524ac685892164dee")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+648193195e8e4d3972e43d8e5d7a46b738dd8904")]
 [assembly: System.Reflection.AssemblyProductAttribute("DbBridge")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DbBridge")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

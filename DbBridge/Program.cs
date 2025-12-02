@@ -2,6 +2,7 @@ using DbBridge;
 using Microsoft.Data.SqlClient;
 using System.Data;
 using System;
+using System.IO;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -1016,20 +1017,34 @@ static string FixEncoding(string text)
         var connStr = Environment.GetEnvironmentVariable("SQL_CONN") ?? DEFAULT_SQL_CONN;
 
         var sw = System.Diagnostics.Stopwatch.StartNew();
+        
         try
         {
             // Definisci il timezone fisso per Europe/Rome
             TimeZoneInfo romeTimeZone = TimeZoneInfo.FindSystemTimeZoneById("W. Europe Standard Time");
 
             await using var conn = new SqlConnection(connStr);
+            
             await conn.OpenAsync();
-
+            
+            // Genera un nuovo ID per id_log (in caso non sia IDENTITY)
+            var getMaxIdSql = "SELECT ISNULL(MAX(id_log), 0) + 1 FROM MSSql32801.log_pianifica";
+            int newIdLog = 1;
+            await using (var maxCmd = new SqlCommand(getMaxIdSql, conn) { CommandTimeout = 15 })
+            {
+                var result = await maxCmd.ExecuteScalarAsync();
+                if (result != null && result != DBNull.Value)
+                {
+                    newIdLog = Convert.ToInt32(result);
+                }
+            }
+            
             // Il campo Username ora contiene direttamente il nome del tecnico (da JWT)
             string nomeTecnico = req.Username ?? "";
 
-            // Costruisci la query dinamicamente per gestire NULL in origine
-            var columns = new List<string> { "WORKORDER", "DATA_PIANIFICAZIONE", "DATA_ULTIMA_MODIFICA", "UTENTE_MODIFICA" };
-            var values = new List<string> { "@workorder", "@dataPianificazione", "@dataUltimaModifica", "@utenteModifica" };
+            // Costruisci la query con id_log
+            var columns = new List<string> { "id_log", "WORKORDER", "DATA_PIANIFICAZIONE", "DATA_ULTIMA_MODIFICA", "UTENTE_MODIFICA" };
+            var values = new List<string> { "@idLog", "@workorder", "@dataPianificazione", "@dataUltimaModifica", "@utenteModifica" };
             
             // Aggiungi origine solo se non è NULL (ma dato che è sempre NULL, non lo aggiungiamo)
             // columns.Add("ORIGINE");
@@ -1041,6 +1056,7 @@ static string FixEncoding(string text)
                 VALUES ({string.Join(", ", values)})";
 
             await using var cmd = new SqlCommand(sql, conn) { CommandTimeout = 15 };
+            cmd.Parameters.AddWithValue("@idLog", newIdLog);
             cmd.Parameters.AddWithValue("@workorder", req.Workorder ?? "");
             cmd.Parameters.AddWithValue("@dataPianificazione", req.DataPianificazione ?? "");
             
@@ -1065,13 +1081,13 @@ static string FixEncoding(string text)
                 }
             }
             cmd.Parameters.AddWithValue("@dataUltimaModifica", dataUltimaModifica);
-            
-            cmd.Parameters.AddWithValue("@utenteModifica", nomeTecnico ?? ""); // Nome del tecnico ricevuto direttamente
-            // cmd.Parameters.AddWithValue("@origine", DBNull.Value); // Rimosso perché colonna non permette NULL
+            cmd.Parameters.AddWithValue("@utenteModifica", nomeTecnico ?? "");
 
             var affected = await cmd.ExecuteNonQueryAsync();
             
             sw.Stop();
+            app.Logger.LogInformation("LOG-PIANIFICA SUCCESS - Righe inserite: {Affected}, Durata: {Duration}ms", affected, sw.ElapsedMilliseconds);
+            
             return Results.Json(new
             {
                 success = true,
@@ -1082,7 +1098,8 @@ static string FixEncoding(string text)
         catch (Exception ex)
         {
             sw.Stop();
-            app.Logger.LogError(ex, "❌ LOG-PIANIFICA: Errore nell'inserimento: {ErrorMessage}", ex.Message);
+            app.Logger.LogError(ex, "LOG-PIANIFICA: Errore nell'inserimento: {ErrorMessage}", ex.Message);
+            
             return Results.Json(new { 
                 ok = false, 
                 error = "DB_ERROR",
