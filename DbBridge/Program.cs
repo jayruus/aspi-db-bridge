@@ -1060,24 +1060,18 @@ static string FixEncoding(string text)
             cmd.Parameters.AddWithValue("@workorder", req.Workorder ?? "");
             cmd.Parameters.AddWithValue("@dataPianificazione", req.DataPianificazione ?? "");
             
-            // Parse DataUltimaModifica from string to DateTime (assumiamo sia UTC dal PHP)
-            DateTime dataUltimaModifica = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, romeTimeZone); // Default Rome time
+            // Parse DataUltimaModifica from string to DateTime
+            // Il PHP invia già l'ora locale (non UTC), quindi non serve conversione
+            DateTime dataUltimaModifica = DateTime.Now; // Default ora locale
             if (!string.IsNullOrEmpty(req.DataUltimaModifica))
             {
                 if (DateTime.TryParse(req.DataUltimaModifica, out var parsedDate))
                 {
-                    // Assumiamo che la data dal PHP sia in UTC, convertiamola a Rome time
-                    if (parsedDate.Kind == DateTimeKind.Unspecified)
-                    {
-                        parsedDate = DateTime.SpecifyKind(parsedDate, DateTimeKind.Utc);
-                    }
-                    
-                    dataUltimaModifica = TimeZoneInfo.ConvertTimeFromUtc(parsedDate.ToUniversalTime(), romeTimeZone);
+                    dataUltimaModifica = parsedDate;
                 }
                 else
                 {
-                    app.Logger.LogWarning("LOG-PIANIFICA: Impossibile parsare DataUltimaModifica '{DataUltimaModifica}', uso UTC attuale convertito a Rome time", req.DataUltimaModifica);
-                    dataUltimaModifica = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, romeTimeZone);
+                    app.Logger.LogWarning("LOG-PIANIFICA: Impossibile parsare DataUltimaModifica '{DataUltimaModifica}', uso ora locale corrente", req.DataUltimaModifica);
                 }
             }
             cmd.Parameters.AddWithValue("@dataUltimaModifica", dataUltimaModifica);
