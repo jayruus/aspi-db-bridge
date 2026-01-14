@@ -164,11 +164,13 @@ app.MapPost("/db/eventi/tecnico", async (EventiByTecnicoReq req) =>
                    RDI_OPEN.COD_TIPO_EVENTO as cod_tipo_evento, RDI_OPEN.DES_TIPO_EVENTO as des_tipo_evento,
                    RDI_OPEN.NOTE_EVENTO as note_evento, '' as nome_tecnico,
                    RDI_OPEN.DES_STATO as des_stato, RDI_OPEN.RAG_SOC_CF as cliente, RDI_OPEN.COD_CF as cod_cf, RDI_OPEN.CODCHI_E as codchi_e, RDI_OPEN.CONTATTO as contatto,
-                   RDI_OPEN.TEL_CF as telefono, RDI_OPEN.TEL_CONTATTO as telefono_contatto,
-                   RDI_OPEN.CELL_CONTATTO as cellulare, RDI_OPEN.DEVICE as device,
+                   RDI_OPEN.TEL_CF as telefono,
+                   RDI_OPEN.TEL_CONTATTO as telefono_contatto,
+                   RDI_OPEN.CELL_CONTATTO as cellulare_contatto,
+                   RDI_OPEN.DEVICE as device,
                    RDI_OPEN.MATRICOLA_DEVICE as matricola_device,
                    RDI_OPEN.INDI_DEST_MERCE as indirizzo, RDI_OPEN.COMUNE_DESTINAZIONE as comune,
-                   RDI_OPEN.PROVINCIA_DESTINAZIONE as provincia
+                   RDI_OPEN.PROVINCIA_DESTINAZIONE as provincia, RDI_OPEN.DES_DEST_MERCE as des_dest_merce
             FROM MSSql32801.RDI_OPEN
             WHERE {whereClause}
             {orderBy}
@@ -384,11 +386,13 @@ app.MapGet("/db/eventi/{id}", async (string id) =>
                    RDI_OPEN.COD_TIPO_EVENTO as cod_tipo_evento, RDI_OPEN.DES_TIPO_EVENTO as des_tipo_evento,
                    RDI_OPEN.NOTE_EVENTO as note_evento, '' as nome_tecnico,
                    RDI_OPEN.DES_STATO as des_stato, RDI_OPEN.RAG_SOC_CF as cliente, RDI_OPEN.COD_CF as cod_cf, RDI_OPEN.CODCHI_E as codchi_e, RDI_OPEN.CONTATTO as contatto,
-                   RDI_OPEN.TEL_CF as telefono, RDI_OPEN.TEL_CONTATTO as telefono_contatto,
-                   RDI_OPEN.CELL_CONTATTO as cellulare, RDI_OPEN.DEVICE as device,
+                   RDI_OPEN.TEL_CF as telefono,
+                   RDI_OPEN.TEL_CONTATTO as telefono_contatto,
+                   RDI_OPEN.CELL_CONTATTO as cellulare_contatto,
+                   RDI_OPEN.DEVICE as device,
                    RDI_OPEN.MATRICOLA_DEVICE as matricola_device,
                    RDI_OPEN.INDI_DEST_MERCE as indirizzo, RDI_OPEN.COMUNE_DESTINAZIONE as comune,
-                   RDI_OPEN.PROVINCIA_DESTINAZIONE as provincia
+                   RDI_OPEN.PROVINCIA_DESTINAZIONE as provincia, RDI_OPEN.DES_DEST_MERCE as des_dest_merce
             FROM MSSql32801.RDI_OPEN
             WHERE RDI_OPEN.EVENTO_ID = @id";
 
@@ -428,7 +432,8 @@ app.MapGet("/db/eventi/{id}", async (string id) =>
             ok = false, 
             error = "DB_ERROR",
             error_code = "DB_ERROR",
-            message = "Database error",
+            message = ex.Message,
+            stackTrace = ex.StackTrace,
             durationMs = sw.ElapsedMilliseconds 
         }, statusCode: 500);
     }
